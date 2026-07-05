@@ -1,31 +1,19 @@
 <script lang="ts">
 	import { dataStore } from '$lib/data/workspace.svelte';
+	import { ROLE_BADGE_MAP, ROLE_LABEL_MAP } from '$lib/data/part-constants';
+	import { formatDate } from '$lib/utils/format';
 	import Nav from '$lib/components/Nav.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
 
 	let importInput = $state<HTMLInputElement | undefined>(undefined);
-	let deleteError = $state('');
-
-	const roleColors: Record<string, string> = {
-		exile: 'bg-exile-100 text-exile-700',
-		manager: 'bg-manager-100 text-manager-700',
-		firefighter: 'bg-firefighter-100 text-firefighter-700',
-		unknown: 'bg-stone-100 text-stone-600'
-	};
-
-	const roleLabels: Record<string, string> = {
-		exile: 'Exile',
-		manager: 'Manager',
-		firefighter: 'Firefighter',
-		unknown: 'Unknown'
-	};
+	let error = $state('');
 
 	function handleDelete(id: string, name: string) {
 		if (!confirm(`Remove "${name}"? This cannot be undone.`)) return;
 		try {
 			dataStore.deletePart(id);
 		} catch {
-			deleteError = 'Failed to delete part.';
+			error = 'Failed to delete part.';
 		}
 	}
 
@@ -37,7 +25,7 @@
 			try {
 				dataStore.importJSON(ev.target?.result as string);
 			} catch {
-				deleteError = 'Could not import — the file may be invalid.';
+				error = 'Could not import — the file may be invalid.';
 			}
 		};
 		reader.readAsText(file);
@@ -61,8 +49,8 @@
 		</a>
 	</div>
 
-	{#if deleteError}
-		<div class="bg-red-50 text-red-700 rounded-lg px-4 py-3 text-sm mb-6">{deleteError}</div>
+	{#if error}
+		<div class="bg-red-50 text-red-700 rounded-lg px-4 py-3 text-sm mb-6">{error}</div>
 	{/if}
 
 	{#if dataStore.parts.length === 0}
@@ -112,7 +100,7 @@
 							<button
 								type="button"
 								onclick={(e) => { e.preventDefault(); handleDelete(part.id, part.name); }}
-								class="relative text-stone-300 hover:text-red-400 transition-colors text-lg leading-none opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 p-1"
+								class="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 p-1"
 								aria-label="Delete {part.name}"
 							>
 								×
@@ -131,15 +119,13 @@
 
 						<div class="flex items-center justify-between">
 							{#if part.roleType}
-								<span class="text-xs font-medium px-2.5 py-1 rounded-full {roleColors[part.roleType] ?? roleColors.unknown}">
-									{roleLabels[part.roleType] ?? part.roleType}
+								<span class="text-xs font-medium px-2.5 py-1 rounded-full {ROLE_BADGE_MAP[part.roleType] ?? ROLE_BADGE_MAP.unknown}">
+									{ROLE_LABEL_MAP[part.roleType] ?? part.roleType}
 								</span>
 							{:else}
 								<span></span>
 							{/if}
-							<span class="text-xs text-stone-300">
-								{new Date(part.createdAt).toLocaleDateString()}
-							</span>
+							<span class="text-xs text-stone-300">{formatDate(part.createdAt)}</span>
 						</div>
 					</div>
 				</a>

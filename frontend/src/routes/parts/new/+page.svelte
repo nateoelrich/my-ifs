@@ -4,48 +4,20 @@
 	import { fly, fade } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import type { CreatePartInput } from '$lib/data/types';
+	import {
+		DEFAULT_PART_COLOR,
+		EMOTION_SUGGESTIONS,
+		BELIEF_SUGGESTIONS,
+		TRIGGER_SUGGESTIONS,
+		FEAR_SUGGESTIONS,
+		ROLE_CONFIGS,
+		ROLE_BADGE_MAP
+	} from '$lib/data/part-constants';
+	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
 
 	const DRAFT_KEY = 'ifs_part_draft';
-
-	const SWATCHES = [
-		{ hex: '#D4A5A5', label: 'Dusty rose' },
-		{ hex: '#E08B6E', label: 'Coral' },
-		{ hex: '#E8C456', label: 'Amber' },
-		{ hex: '#8CBD9A', label: 'Sage' },
-		{ hex: '#4EC9B8', label: 'Teal' },
-		{ hex: '#6DB5E0', label: 'Sky' },
-		{ hex: '#7B8EC8', label: 'Indigo' },
-		{ hex: '#A08DC0', label: 'Violet' },
-		{ hex: '#8A9BB0', label: 'Slate' },
-		{ hex: '#9E968E', label: 'Warm gray' },
-		{ hex: '#3D8A72', label: 'Spruce' },
-		{ hex: '#7BA7C2', label: 'Dusty blue' },
-	];
-
-	const EMOTION_SUGGESTIONS = [
-		'fear', 'anger', 'sadness', 'shame', 'grief', 'anxiety', 'loneliness',
-		'worthlessness', 'guilt', 'hopelessness', 'despair', 'rage', 'hurt',
-		'embarrassment', 'jealousy', 'panic', 'numbness'
-	];
-
-	const BELIEF_SUGGESTIONS = [
-		"I'm not good enough", "I'll be rejected", "I'll be humiliated",
-		"I'm worthless", "Nobody cares", "I have to be perfect",
-		"It's my fault", "I'm a burden", "I'll fail", "I'm broken"
-	];
-
-	const TRIGGER_SUGGESTIONS = [
-		'criticism', 'rejection', 'conflict', 'being ignored', 'failure',
-		'being controlled', 'uncertainty', 'vulnerability', 'confrontation',
-		'being rushed', 'being evaluated', 'feeling unseen', 'abandonment', 'unpredictability'
-	];
-
-	const FEAR_SUGGESTIONS = [
-		'being rejected', 'being humiliated', 'losing control', 'being abandoned',
-		'making mistakes', 'being exposed', 'not being enough', 'being hurt again'
-	];
 
 	const steps = [
 		{ id: 'name',     title: 'Name',        question: 'What would you call this part?' },
@@ -61,51 +33,6 @@
 		{ id: 'review',   title: 'Review',       question: 'Here is what you discovered' }
 	];
 
-	const roleDescriptions = [
-		{
-			value: 'exile',
-			label: 'Exile',
-			icon: '◎',
-			metaphor: 'Tender & hidden',
-			colorClass: 'bg-exile-100 text-exile-700 border-exile-200',
-			selectedClass: 'border-exile-200 bg-exile-50',
-			description: "Carries pain, shame, or trauma from the past. Often feels young and vulnerable, tucked away where others won't find it."
-		},
-		{
-			value: 'manager',
-			label: 'Manager',
-			icon: '⊞',
-			metaphor: 'Planning & controlling',
-			colorClass: 'bg-manager-100 text-manager-700 border-manager-200',
-			selectedClass: 'border-manager-200 bg-manager-50',
-			description: 'Works proactively to prevent exile pain from surfacing. Tends to plan, control, criticize, achieve, and keep everything in order.'
-		},
-		{
-			value: 'firefighter',
-			label: 'Firefighter',
-			icon: '◈',
-			metaphor: 'Reactive & urgent',
-			colorClass: 'bg-firefighter-100 text-firefighter-700 border-firefighter-200',
-			selectedClass: 'border-firefighter-200 bg-firefighter-50',
-			description: 'Reacts when exile pain breaks through the managers. Uses impulsive, intense behaviors to extinguish overwhelming emotion — fast.'
-		},
-		{
-			value: 'unknown',
-			label: 'Not sure yet',
-			icon: '○',
-			metaphor: 'Still discovering',
-			colorClass: 'bg-stone-100 text-stone-600 border-stone-200',
-			selectedClass: 'border-stone-200 bg-stone-50',
-			description: "It's okay not to know. This is just a starting point — you can always revisit as your understanding deepens."
-		}
-	];
-
-	const roleColors: Record<string, string> = {
-		exile: 'bg-exile-100 text-exile-700',
-		manager: 'bg-manager-100 text-manager-700',
-		firefighter: 'bg-firefighter-100 text-firefighter-700',
-		unknown: 'bg-stone-100 text-stone-600'
-	};
 
 	function loadDraft(): Partial<CreatePartInput> {
 		if (!browser) return {};
@@ -134,7 +61,7 @@
 	// Form state
 	let name = $state(draft.name ?? '');
 	let nickname = $state(draft.nickname ?? '');
-	let color = $state(draft.color ?? '#4EC9B8');
+	let color = $state(draft.color ?? DEFAULT_PART_COLOR);
 	let bodyLocation = $state(draft.bodyLocation ?? '');
 	let bodySensation = $state(draft.bodySensation ?? '');
 	let image = $state(draft.image ?? '');
@@ -295,26 +222,7 @@
 							</div>
 							<div class="space-y-2">
 								<label class="block text-sm text-stone-500">Color <span class="text-stone-400">(pick one that feels like this part)</span></label>
-								<div class="grid grid-cols-6 gap-2.5">
-									{#each SWATCHES as swatch}
-										<button
-											type="button"
-											onclick={() => (color = swatch.hex)}
-											title={swatch.label}
-											aria-label="{swatch.label}{color === swatch.hex ? ' (selected)' : ''}"
-											class="w-9 h-9 rounded-full transition-all duration-150 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-400 {
-												color === swatch.hex
-													? 'ring-2 ring-offset-2 ring-stone-400 scale-110'
-													: 'opacity-75 hover:opacity-100 hover:scale-105'
-											}"
-											style="background-color: {swatch.hex}"
-										>
-											{#if color === swatch.hex}
-												<span class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold drop-shadow" aria-hidden="true">✓</span>
-											{/if}
-										</button>
-									{/each}
-								</div>
+								<ColorPicker bind:value={color} />
 							</div>
 						</div>
 
@@ -456,7 +364,7 @@
 								<p class="text-stone-400 text-sm">In IFS, parts tend to fall into three roles. It's okay to be unsure — this is just a starting point.</p>
 							</div>
 							<div class="space-y-3">
-								{#each roleDescriptions as role}
+								{#each ROLE_CONFIGS as role}
 									<label class="flex items-start gap-4 p-4 sm:p-5 rounded-xl border-2 cursor-pointer transition-all {
 										roleType === role.value ? role.selectedClass : 'border-stone-100 hover:border-stone-200 bg-white'
 									}">
@@ -529,7 +437,7 @@
 									<p class="text-stone-400 italic text-sm mt-1">"{nickname}"</p>
 								{/if}
 								{#if roleType}
-									<span class="inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full {roleColors[roleType] ?? roleColors.unknown}">
+									<span class="inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full {ROLE_BADGE_MAP[roleType] ?? ROLE_BADGE_MAP.unknown}">
 										{roleType}
 									</span>
 								{/if}

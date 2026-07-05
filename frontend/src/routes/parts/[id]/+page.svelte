@@ -3,48 +3,22 @@
 	import { goto } from '$app/navigation';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import type { Part, CreatePartInput } from '$lib/data/types';
+	import {
+		DEFAULT_PART_COLOR,
+		ROLE_BADGE_MAP,
+		ROLE_LABEL_MAP,
+		ROLE_CONFIGS,
+		EMOTION_SUGGESTIONS,
+		BELIEF_SUGGESTIONS,
+		TRIGGER_SUGGESTIONS,
+		FEAR_SUGGESTIONS
+	} from '$lib/data/part-constants';
+	import { formatDate } from '$lib/utils/format';
 	import Nav from '$lib/components/Nav.svelte';
+	import ColorPicker from '$lib/components/ColorPicker.svelte';
+	import Section from '$lib/components/Section.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
-
-	const SWATCHES = [
-		{ hex: '#D4A5A5', label: 'Dusty rose' },
-		{ hex: '#E08B6E', label: 'Coral' },
-		{ hex: '#E8C456', label: 'Amber' },
-		{ hex: '#8CBD9A', label: 'Sage' },
-		{ hex: '#4EC9B8', label: 'Teal' },
-		{ hex: '#6DB5E0', label: 'Sky' },
-		{ hex: '#7B8EC8', label: 'Indigo' },
-		{ hex: '#A08DC0', label: 'Violet' },
-		{ hex: '#8A9BB0', label: 'Slate' },
-		{ hex: '#9E968E', label: 'Warm gray' },
-		{ hex: '#3D8A72', label: 'Spruce' },
-		{ hex: '#7BA7C2', label: 'Dusty blue' },
-	];
-
-	const EMOTION_SUGGESTIONS = [
-		'fear', 'anger', 'sadness', 'shame', 'grief', 'anxiety', 'loneliness',
-		'worthlessness', 'guilt', 'hopelessness', 'despair', 'rage', 'hurt',
-		'embarrassment', 'jealousy', 'panic', 'numbness'
-	];
-
-	const BELIEF_SUGGESTIONS = [
-		"I'm not good enough", "I'll be rejected", "I'll be humiliated",
-		"I'm worthless", "Nobody cares", "I have to be perfect",
-		"It's my fault", "I'm a burden", "I'll fail", "I'm broken"
-	];
-
-	const FEAR_SUGGESTIONS = [
-		'being rejected', 'being humiliated', 'losing control', 'being abandoned',
-		'making mistakes', 'being exposed', 'not being enough', 'being hurt again'
-	];
-
-	const roleColors: Record<string, string> = {
-		exile: 'bg-exile-100 text-exile-700',
-		manager: 'bg-manager-100 text-manager-700',
-		firefighter: 'bg-firefighter-100 text-firefighter-700',
-		unknown: 'bg-stone-100 text-stone-600'
-	};
 
 	const id = $derived(page.params.id ?? '');
 	const part = $derived(dataStore.getPart(id) ?? null);
@@ -52,10 +26,10 @@
 	let editing = $state(false);
 	let error = $state('');
 
-	// Edit form state
+	// Edit form fields — populated when entering edit mode
 	let eName = $state('');
 	let eNickname = $state('');
-	let eColor = $state('');
+	let eColor = $state(DEFAULT_PART_COLOR);
 	let eRoleType = $state('');
 	let eBodyLocation = $state('');
 	let eBodySensation = $state('');
@@ -72,10 +46,10 @@
 	let eGiftsWhenUnburdened = $state('');
 	let eNotes = $state('');
 
-	function populateEditForm(p: Part) {
+	function startEdit(p: Part) {
 		eName = p.name;
 		eNickname = p.nickname ?? '';
-		eColor = p.color ?? '#9E968E';
+		eColor = p.color ?? DEFAULT_PART_COLOR;
 		eRoleType = p.roleType ?? '';
 		eBodyLocation = p.bodyLocation ?? '';
 		eBodySensation = p.bodySensation ?? '';
@@ -91,6 +65,7 @@
 		eWhatItNeedsFromSelf = p.whatItNeedsFromSelf ?? '';
 		eGiftsWhenUnburdened = p.giftsWhenUnburdened ?? '';
 		eNotes = p.notes ?? '';
+		editing = true;
 	}
 
 	function saveEdit() {
@@ -134,7 +109,7 @@
 		}
 	}
 
-	const inputClass = "w-full rounded-lg border border-stone-200 px-4 py-2.5 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm";
+	const inputClass = 'w-full rounded-lg border border-stone-200 px-4 py-2.5 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent';
 	const textareaClass = `${inputClass} resize-none`;
 </script>
 
@@ -148,14 +123,13 @@
 		</div>
 
 	{:else}
-		<!-- Header with color wash -->
+		<!-- Header -->
 		<div
 			class="rounded-2xl mb-8 px-6 pt-6 pb-7 border border-stone-100/60"
 			style={part.color ? `background: linear-gradient(150deg, ${part.color}1A 0%, ${part.color}0D 40%, transparent 100%)` : ''}
 		>
-			<!-- Avatar — centered on mobile, left on sm+ -->
 			<div class="flex justify-center mb-5 sm:justify-start">
-				<PartAvatar color={part.color || '#9E968E'} name={part.name} size="xl" />
+				<PartAvatar color={part.color || DEFAULT_PART_COLOR} name={part.name} size="xl" />
 			</div>
 
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -164,38 +138,30 @@
 					<h1 class="text-xl sm:text-2xl font-serif text-stone-800">{part.name}</h1>
 					{#if part.nickname}<p class="text-stone-400 text-sm italic">"{part.nickname}"</p>{/if}
 					{#if part.roleType}
-						<span class="inline-block mt-2 text-xs font-medium px-2.5 py-1 rounded-full {roleColors[part.roleType] ?? roleColors.unknown}">
-							{part.roleType}
+						<span class="inline-block mt-2 text-xs font-medium px-2.5 py-1 rounded-full {ROLE_BADGE_MAP[part.roleType] ?? ROLE_BADGE_MAP.unknown}">
+							{ROLE_LABEL_MAP[part.roleType] ?? part.roleType}
 						</span>
 					{/if}
 				</div>
 				<div class="flex gap-2 sm:flex-shrink-0">
 					{#if !editing}
 						<button
-							onclick={() => { populateEditForm(part!); editing = true; }}
+							onclick={() => startEdit(part!)}
 							class="flex-1 sm:flex-none text-sm text-stone-500 hover:text-primary-700 border border-stone-200 hover:border-primary-300 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>
-							Edit
-						</button>
+						>Edit</button>
 						<button
 							onclick={handleDelete}
-							class="flex-1 sm:flex-none text-sm text-stone-400 hover:text-red-500 border border-stone-200 hover:border-red-200 rounded-lg transition-colors px-4 py-2.5 min-h-[44px]"
-						>
-							Delete
-						</button>
+							class="flex-1 sm:flex-none text-sm text-stone-400 hover:text-red-500 border border-stone-200 hover:border-red-200 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
+						>Delete</button>
 					{:else}
 						<button
 							onclick={() => (editing = false)}
-							class="flex-1 sm:flex-none text-sm text-stone-500 hover:text-stone-700 border border-stone-200 rounded-lg transition-colors min-h-[44px] px-4 py-2.5"
-						>
-							Cancel
-						</button>
+							class="flex-1 sm:flex-none text-sm text-stone-500 hover:text-stone-700 border border-stone-200 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
+						>Cancel</button>
 						<button
 							onclick={saveEdit}
 							class="flex-1 sm:flex-none text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>
-							Save
-						</button>
+						>Save</button>
 					{/if}
 				</div>
 			</div>
@@ -209,24 +175,20 @@
 			<!-- View mode -->
 			<div class="space-y-6">
 				{#if part.bodyLocation || part.bodySensation}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6">
-						<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Body</h2>
+					<Section title="Body">
 						{#if part.bodyLocation}<p class="text-stone-800 font-medium">{part.bodyLocation}</p>{/if}
 						{#if part.bodySensation}<p class="text-stone-600 mt-1">{part.bodySensation}</p>{/if}
-					</section>
+					</Section>
 				{/if}
 
 				{#if part.image}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6">
-						<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">
-							Image{part.apparentAge ? ` · ${part.apparentAge}` : ''}
-						</h2>
+					<Section title="Image{part.apparentAge ? ` · ${part.apparentAge}` : ''}">
 						<p class="text-stone-700 italic">"{part.image}"</p>
-					</section>
+					</Section>
 				{/if}
 
 				{#if part.emotions?.length > 0 || part.beliefs?.length > 0 || part.triggers?.length > 0}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
+					<Section class="space-y-4">
 						{#if part.emotions?.length > 0}
 							<div>
 								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Emotions</h2>
@@ -257,11 +219,11 @@
 								</div>
 							</div>
 						{/if}
-					</section>
+					</Section>
 				{/if}
 
 				{#if part.positiveIntention || part.fears?.length > 0}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
+					<Section class="space-y-4">
 						{#if part.positiveIntention}
 							<div>
 								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Positive Intention</h2>
@@ -278,23 +240,18 @@
 								</div>
 							</div>
 						{/if}
-					</section>
+					</Section>
 				{/if}
 
 				{#if part.originLifeStage || part.originStory}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6">
-						<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Origin</h2>
-						{#if part.originLifeStage}
-							<p class="text-stone-800 font-medium">{part.originLifeStage}</p>
-						{/if}
-						{#if part.originStory}
-							<p class="text-stone-600 mt-2 whitespace-pre-wrap">{part.originStory}</p>
-						{/if}
-					</section>
+					<Section title="Origin">
+						{#if part.originLifeStage}<p class="text-stone-800 font-medium">{part.originLifeStage}</p>{/if}
+						{#if part.originStory}<p class="text-stone-600 mt-2 whitespace-pre-wrap">{part.originStory}</p>{/if}
+					</Section>
 				{/if}
 
 				{#if part.whatItNeedsFromSelf || part.giftsWhenUnburdened}
-					<section class="bg-primary-50 rounded-2xl border border-primary-100 p-4 sm:p-6 space-y-4">
+					<Section variant="primary" class="space-y-4">
 						{#if part.whatItNeedsFromSelf}
 							<div>
 								<h2 class="text-xs font-medium text-primary-500 uppercase tracking-wide mb-2">Needs from Self</h2>
@@ -307,27 +264,24 @@
 								<p class="text-primary-900">{part.giftsWhenUnburdened}</p>
 							</div>
 						{/if}
-					</section>
+					</Section>
 				{/if}
 
 				{#if part.notes}
-					<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6">
-						<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Notes</h2>
+					<Section title="Notes">
 						<p class="text-stone-600 whitespace-pre-wrap">{part.notes}</p>
-					</section>
+					</Section>
 				{/if}
 
 				<p class="text-xs text-stone-300 text-right">
-					Created {new Date(part.createdAt).toLocaleDateString()} ·
-					Updated {new Date(part.updatedAt).toLocaleDateString()}
+					Created {formatDate(part.createdAt)} · Updated {formatDate(part.updatedAt)}
 				</p>
 			</div>
 
 		{:else}
 			<!-- Edit mode -->
 			<div class="space-y-6">
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Identity</h2>
+				<Section title="Identity" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Name *</label>
 						<input type="text" bind:value={eName} class={inputClass} />
@@ -338,41 +292,20 @@
 					</div>
 					<div class="space-y-2">
 						<label class="block text-sm text-stone-600">Color</label>
-						<div class="grid grid-cols-6 gap-2.5">
-							{#each SWATCHES as swatch}
-								<button
-									type="button"
-									onclick={() => (eColor = swatch.hex)}
-									title={swatch.label}
-									aria-label="{swatch.label}{eColor === swatch.hex ? ' (selected)' : ''}"
-									class="w-9 h-9 rounded-full transition-all duration-150 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-400 {
-										eColor === swatch.hex
-											? 'ring-2 ring-offset-2 ring-stone-400 scale-110'
-											: 'opacity-75 hover:opacity-100 hover:scale-105'
-									}"
-									style="background-color: {swatch.hex}"
-								>
-									{#if eColor === swatch.hex}
-										<span class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold drop-shadow" aria-hidden="true">✓</span>
-									{/if}
-								</button>
-							{/each}
-						</div>
+						<ColorPicker bind:value={eColor} />
 					</div>
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Role type</label>
 						<select bind:value={eRoleType} class={inputClass}>
 							<option value="">— Not sure yet —</option>
-							<option value="exile">Exile</option>
-							<option value="manager">Manager</option>
-							<option value="firefighter">Firefighter</option>
-							<option value="unknown">Unknown</option>
+							{#each ROLE_CONFIGS as role}
+								<option value={role.value}>{role.label}</option>
+							{/each}
 						</select>
 					</div>
-				</section>
+				</Section>
 
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Body & Image</h2>
+				<Section title="Body & Image" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Body location</label>
 						<input type="text" bind:value={eBodyLocation} class={inputClass} />
@@ -389,10 +322,9 @@
 						<label class="block text-sm text-stone-600">Apparent age</label>
 						<input type="text" bind:value={eApparentAge} class={inputClass} />
 					</div>
-				</section>
+				</Section>
 
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Emotions, Beliefs & Triggers</h2>
+				<Section title="Emotions, Beliefs & Triggers" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Emotions</label>
 						<TagInput bind:tags={eEmotions} suggestions={EMOTION_SUGGESTIONS} />
@@ -403,12 +335,11 @@
 					</div>
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Triggers</label>
-						<TagInput bind:tags={eTriggers} />
+						<TagInput bind:tags={eTriggers} suggestions={TRIGGER_SUGGESTIONS} />
 					</div>
-				</section>
+				</Section>
 
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Protective Function</h2>
+				<Section title="Protective Function" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Positive intention</label>
 						<textarea rows={3} bind:value={ePositiveIntention} class={textareaClass}></textarea>
@@ -417,10 +348,9 @@
 						<label class="block text-sm text-stone-600">Fears</label>
 						<TagInput bind:tags={eFears} suggestions={FEAR_SUGGESTIONS} />
 					</div>
-				</section>
+				</Section>
 
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Origin</h2>
+				<Section title="Origin" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">Life stage</label>
 						<input type="text" bind:value={eOriginLifeStage} class={inputClass} />
@@ -429,10 +359,9 @@
 						<label class="block text-sm text-stone-600">Origin story</label>
 						<textarea rows={4} bind:value={eOriginStory} class={textareaClass}></textarea>
 					</div>
-				</section>
+				</Section>
 
-				<section class="bg-white rounded-2xl border border-stone-100 p-4 sm:p-6 space-y-4">
-					<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide">Needs & Gifts</h2>
+				<Section title="Needs & Gifts" class="space-y-4">
 					<div class="space-y-1">
 						<label class="block text-sm text-stone-600">What it needs from Self</label>
 						<textarea rows={3} bind:value={eWhatItNeedsFromSelf} class={textareaClass}></textarea>
@@ -445,7 +374,7 @@
 						<label class="block text-sm text-stone-600">Notes</label>
 						<textarea rows={3} bind:value={eNotes} class={textareaClass}></textarea>
 					</div>
-				</section>
+				</Section>
 			</div>
 		{/if}
 	{/if}

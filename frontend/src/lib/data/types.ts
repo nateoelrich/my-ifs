@@ -56,10 +56,4 @@ export interface Part {
 	notes?: string;
 }
 
-export type PartSummary = Pick<
-	Part,
-	'id' | 'type' | 'schemaVersion' | 'createdAt' | 'updatedAt' |
-	'name' | 'nickname' | 'roleType' | 'color' | 'bodyLocation'
->;
-
 export type CreatePartInput = Omit<Part, 'id' | 'type' | 'schemaVersion' | 'createdAt' | 'updatedAt'>;
