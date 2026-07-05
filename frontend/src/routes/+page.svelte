@@ -1,4 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	goto('/parts');
+	import { onMount } from 'svelte';
+	onMount(() => goto('/parts'));
 </script>
