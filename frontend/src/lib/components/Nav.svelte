@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { dataStore } from '$lib/data/workspace.svelte';
 
 	let importInput: HTMLInputElement;
@@ -32,7 +33,7 @@
 </script>
 
 <nav class="sticky top-0 z-10 bg-canvas/90 backdrop-blur-sm border-b border-stone-100/80 px-4 sm:px-6 py-3.5 flex items-center justify-between">
-	<a href="/parts" class="text-lg font-serif text-stone-700 tracking-wide hover:text-primary-600 transition-colors">
+	<a href="{base}/parts" class="text-lg font-serif text-stone-700 tracking-wide hover:text-primary-600 transition-colors">
 		My IFS
 	</a>
 

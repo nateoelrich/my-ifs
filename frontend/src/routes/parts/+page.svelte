@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import { ROLE_BADGE_MAP, ROLE_LABEL_MAP } from '$lib/data/part-constants';
 	import { formatDate } from '$lib/utils/format';
@@ -42,7 +43,7 @@
 			<p class="text-stone-500 text-sm mt-1">Inner voices, emotions, and protectors you've come to know</p>
 		</div>
 		<a
-			href="/parts/new"
+			href="{base}/parts/new"
 			class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors text-center min-h-[44px] flex items-center justify-center"
 		>
 			+ Identify a Part
@@ -60,7 +61,7 @@
 			<p class="text-sm mt-2 mb-6">Begin by getting to know one of your inner voices</p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
 				<a
-					href="/parts/new"
+					href="{base}/parts/new"
 					class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-6 py-3 text-sm font-medium transition-colors min-h-[44px] flex items-center"
 				>
 					Identify your first part
@@ -87,7 +88,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 			{#each dataStore.parts as part (part.id)}
 				<a
-					href="/parts/{part.id}"
+					href="{base}/parts/{part.id}"
 					class="group relative rounded-2xl border hover:shadow-card transition-all overflow-hidden"
 					style="background: {part.color ? `linear-gradient(160deg, ${part.color}22 0%, ${part.color}08 45%, white 85%)` : 'white'}; border-color: {part.color ? part.color + '35' : 'var(--color-stone-100)'};"
 				>

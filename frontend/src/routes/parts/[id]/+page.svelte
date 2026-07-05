@@ -120,7 +120,7 @@
 	{#if !part}
 		<div class="text-center py-20 text-stone-400">
 			<p>Part not found.</p>
-			<a href="/parts" class="text-primary-600 hover:underline text-sm mt-4 block">← Back to parts</a>
+			<a href="{base}/parts" class="text-primary-600 hover:underline text-sm mt-4 block">← Back to parts</a>
 		</div>
 
 	{:else}
@@ -135,7 +135,7 @@
 
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
-					<a href="/parts" class="text-stone-400 hover:text-stone-600 text-sm transition-colors block mb-2">← Parts</a>
+					<a href="{base}/parts" class="text-stone-400 hover:text-stone-600 text-sm transition-colors block mb-2">← Parts</a>
 					<h1 class="text-xl sm:text-2xl font-serif text-stone-800">{part.name}</h1>
 					{#if part.nickname}<p class="text-stone-400 text-sm italic">"{part.nickname}"</p>{/if}
 					{#if part.roleType}

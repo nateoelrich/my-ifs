@@ -145,7 +145,7 @@
 
 <!-- Minimal wizard header -->
 <header class="sticky top-0 z-10 bg-canvas/80 backdrop-blur-sm border-b border-stone-100/60 px-6 py-3 flex items-center">
-	<a href="/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">← Parts</a>
+	<a href="{base}/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">← Parts</a>
 </header>
 
 <main class="max-w-2xl mx-auto px-4 py-6 sm:py-10">
