@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { fly, fade } from 'svelte/transition';
+	import { fly, fade, slide } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import type { CreatePartInput } from '$lib/data/types';
 	import {
@@ -11,7 +11,8 @@
 		TRIGGER_SUGGESTIONS,
 		FEAR_SUGGESTIONS,
 		ROLE_CONFIGS,
-		ROLE_BADGE_MAP
+		ROLE_BADGE_MAP,
+		ROLE_LABEL_MAP
 	} from '$lib/data/part-constants';
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
@@ -168,13 +169,45 @@
 	{/if}
 
 	<!-- Wizard card -->
-	<div class="bg-white rounded-2xl sm:rounded-3xl border border-stone-100/80 shadow-float overflow-hidden">
+	<div
+		class="rounded-2xl sm:rounded-3xl border shadow-float overflow-hidden transition-colors duration-500"
+		style="background-color: {color}12; border-color: {color}30; --part-color: {color}; --part-ring: {color}40;"
+	>
 		{#if error}
 			<div class="bg-red-50 text-red-700 px-10 pt-6 pb-0 text-sm">{error}</div>
 		{/if}
 
-		<!-- Animated step content -->
-		<div class="px-5 pt-8 sm:px-10 sm:pt-10" style="min-height: 360px;">
+		<!-- Part summary — visible once the name is set, persists across steps -->
+		{#if name.trim() && currentStep >= 1}
+			{@const statParts = [
+				emotions.length  ? `${emotions.length} feeling${emotions.length  !== 1 ? 's' : ''}` : '',
+				beliefs.length   ? `${beliefs.length} belief${beliefs.length    !== 1 ? 's' : ''}` : '',
+				triggers.length  ? `${triggers.length} trigger${triggers.length !== 1 ? 's' : ''}` : '',
+			].filter(Boolean)}
+			<div
+				transition:slide={{ duration: 220 }}
+				class="flex items-center gap-3 px-5 sm:px-10 py-3 border-b"
+				style="border-color: {color}25; background-color: {color}0C;"
+			>
+				<PartAvatar size="sm" {color} name={name} />
+				<div class="flex-1 min-w-0">
+					<p class="text-sm font-medium text-stone-700 truncate">{name}</p>
+					{#if nickname}
+						<p class="text-xs text-stone-400 italic truncate">"{nickname}"</p>
+					{:else if statParts.length > 0}
+						<p class="text-xs text-stone-400">{statParts.join(' · ')}</p>
+					{/if}
+				</div>
+				{#if roleType}
+					<span class="text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0 {ROLE_BADGE_MAP[roleType] ?? ROLE_BADGE_MAP.unknown}">
+						{ROLE_LABEL_MAP[roleType] ?? roleType}
+					</span>
+				{/if}
+			</div>
+		{/if}
+
+		<!-- Animated step content — CSS variables cascade to all inputs in this subtree -->
+		<div class="wizard-field px-5 pt-8 sm:px-10 sm:pt-10" style="min-height: 360px;">
 			{#key currentStep}
 				<div
 					in:fly={{ x: direction * 28, duration: 220, opacity: 0 }}
@@ -284,7 +317,7 @@
 								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[3].question}</h2>
 								<p class="text-stone-400 text-sm">Tap to select feelings this part carries, or type your own.</p>
 							</div>
-							<TagInput bind:tags={emotions} suggestions={EMOTION_SUGGESTIONS} placeholder="Or type your own…" pillMode={true} />
+							<TagInput bind:tags={emotions} suggestions={EMOTION_SUGGESTIONS} placeholder="Or type your own…" pillMode={true} accentColor={color} />
 						</div>
 
 					<!-- Step 4: Beliefs -->
@@ -294,7 +327,7 @@
 								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[4].question}</h2>
 								<p class="text-stone-400 text-sm">What does this part believe about you, the world, or what will happen?</p>
 							</div>
-							<TagInput bind:tags={beliefs} suggestions={BELIEF_SUGGESTIONS} placeholder="Or describe your own belief…" pillMode={true} />
+							<TagInput bind:tags={beliefs} suggestions={BELIEF_SUGGESTIONS} placeholder="Or describe your own belief…" pillMode={true} accentColor={color} />
 						</div>
 
 					<!-- Step 5: Triggers -->
@@ -304,7 +337,7 @@
 								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[5].question}</h2>
 								<p class="text-stone-400 text-sm">What situations, people, or experiences tend to bring this part forward?</p>
 							</div>
-							<TagInput bind:tags={triggers} suggestions={TRIGGER_SUGGESTIONS} placeholder="Or describe a trigger…" pillMode={true} />
+							<TagInput bind:tags={triggers} suggestions={TRIGGER_SUGGESTIONS} placeholder="Or describe a trigger…" pillMode={true} accentColor={color} />
 						</div>
 
 					<!-- Step 6: Intention -->
@@ -325,7 +358,7 @@
 							</div>
 							<div class="space-y-1">
 								<label class="block text-sm text-stone-600">What would it fear if it stopped?</label>
-								<TagInput bind:tags={fears} suggestions={FEAR_SUGGESTIONS} placeholder="Or describe a fear…" pillMode={true} />
+								<TagInput bind:tags={fears} suggestions={FEAR_SUGGESTIONS} placeholder="Or describe a fear…" pillMode={true} accentColor={color} />
 							</div>
 						</div>
 
@@ -426,7 +459,10 @@
 					<!-- Step 10: Review -->
 					{:else if currentStep === 10}
 						<div class="space-y-5">
-							<div class="text-center mb-2">
+							<div
+								class="text-center mb-2 rounded-2xl py-7 px-4 -mx-1"
+								style="background: linear-gradient(180deg, {color}28 0%, {color}0A 65%, transparent 100%);"
+							>
 								<div class="flex justify-center mb-4">
 									<PartAvatar size="xl" color={color} name={name || 'Part'} />
 								</div>
@@ -463,7 +499,10 @@
 										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-2">Emotions</p>
 										<div class="flex flex-wrap gap-1.5">
 											{#each emotions as e}
-												<span class="bg-primary-50 text-primary-700 rounded-full px-2.5 py-1 text-xs">{e}</span>
+												<span
+													class="rounded-full px-2.5 py-1 text-xs font-medium"
+													style="background-color: {color}22; color: {color};"
+												>{e}</span>
 											{/each}
 										</div>
 									</div>
@@ -496,9 +535,10 @@
 								{/if}
 
 								{#if whatItNeedsFromSelf}
-									<div class="bg-primary-50 rounded-xl p-4">
-										<p class="text-primary-700 text-xs font-medium uppercase tracking-wide mb-1">Needs from Self</p>
-										<p class="text-primary-900">{whatItNeedsFromSelf}</p>
+									<div class="rounded-xl p-4" style="background-color: {color}18;">
+										<p class="text-xs font-medium uppercase tracking-wide mb-1" style="color: {color};"
+											>Needs from Self</p>
+										<p class="text-stone-800">{whatItNeedsFromSelf}</p>
 									</div>
 								{/if}
 							</div>
@@ -515,7 +555,7 @@
 				<button
 					type="button"
 					onclick={next}
-					class="bg-primary-600 hover:bg-primary-700 text-white rounded-xl px-10 py-3 text-sm font-medium transition-colors tracking-wide"
+					class="wizard-btn text-white rounded-xl px-10 py-3 text-sm font-medium tracking-wide"
 				>
 					I'm ready
 				</button>
@@ -545,7 +585,7 @@
 							type="button"
 							onclick={next}
 							disabled={!canAdvance()}
-							class="bg-primary-600 hover:bg-primary-700 disabled:bg-stone-200 disabled:text-stone-400 text-white rounded-lg px-6 py-3 text-sm font-medium transition-colors"
+							class="wizard-btn text-white rounded-lg px-6 py-3 text-sm font-medium"
 						>
 							{currentStep === 0 ? 'Begin' : 'Continue'}
 						</button>
@@ -553,7 +593,7 @@
 						<button
 							type="button"
 							onclick={submit}
-							class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-8 py-3 text-sm font-medium transition-colors"
+							class="wizard-btn text-white rounded-lg px-8 py-3 text-sm font-medium"
 						>
 							Save this part
 						</button>
@@ -565,3 +605,27 @@
 
 	<p class="text-center text-xs text-stone-300 mt-5">Your progress is saved automatically</p>
 </main>
+
+<style>
+	/* Inputs: use selected part color for focus ring */
+	.wizard-field input:focus,
+	.wizard-field textarea:focus {
+		outline: none;
+		border-color: var(--part-color);
+		box-shadow: 0 0 0 3px var(--part-ring);
+	}
+
+	/* Primary action buttons: use selected part color, gray when disabled */
+	.wizard-btn {
+		background-color: var(--part-color);
+		transition: filter 0.15s, background-color 0.3s;
+	}
+	.wizard-btn:hover:not([disabled]) {
+		filter: brightness(0.88);
+	}
+	.wizard-btn[disabled] {
+		background-color: #d6d3d1; /* stone-300 */
+		color: #a8a29e;            /* stone-400 */
+		cursor: not-allowed;
+	}
+</style>

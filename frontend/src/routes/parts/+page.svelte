@@ -88,8 +88,8 @@
 			{#each dataStore.parts as part (part.id)}
 				<a
 					href="/parts/{part.id}"
-					class="group relative bg-white rounded-2xl border border-stone-100 hover:border-stone-200 hover:shadow-card transition-all overflow-hidden"
-					style="background-color: {part.color ? part.color + '0D' : 'transparent'}"
+					class="group relative rounded-2xl border hover:shadow-card transition-all overflow-hidden"
+					style="background: {part.color ? `linear-gradient(160deg, ${part.color}22 0%, ${part.color}08 45%, white 85%)` : 'white'}; border-color: {part.color ? part.color + '35' : 'var(--color-stone-100)'};"
 				>
 					<div class="p-5">
 						<div class="flex items-center gap-3 mb-3">
