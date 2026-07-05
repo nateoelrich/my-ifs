@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import type { Part, CreatePartInput } from '$lib/data/types';
 	import {
@@ -103,7 +104,7 @@
 		if (!confirm(`Remove "${part?.name}"? This cannot be undone.`)) return;
 		try {
 			dataStore.deletePart(id);
-			goto('/parts');
+			goto(`${base}/parts`);
 		} catch {
 			error = 'Failed to delete.';
 		}

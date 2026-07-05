@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { base } from '$app/paths';
 	import { fly, fade, slide } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import type { CreatePartInput } from '$lib/data/types';
@@ -135,7 +136,7 @@
 			};
 			const part = dataStore.createPart(input);
 			clearDraft();
-			goto(`/parts/${part.id}`);
+			goto(`${base}/parts/${part.id}`);
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to save.';
 		}
