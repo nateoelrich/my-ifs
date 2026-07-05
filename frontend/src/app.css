@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Fonts --- */
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+
+  /* --- Canvas --- */
+  --color-canvas:       #F9F7F4;
+  --color-canvas-muted: #F0EDE8;
+
+  /* --- Primary (Self / dusty violet) --- */
+  --color-primary-50:  #F4F2FA;
+  --color-primary-100: #E8E4F3;
+  --color-primary-200: #D1C8E9;
+  --color-primary-300: #B9AFDF;
+  --color-primary-400: #9D90D2;
+  --color-primary-500: #8272C4;
+  --color-primary-600: #6B5FA8;
+  --color-primary-700: #5A4F96;
+  --color-primary-800: #483E7A;
+  --color-primary-900: #362E5E;
+
+  /* --- Role: Exile — muted periwinkle-slate, tender/hidden --- */
+  --color-exile-50:  #ECEFFE;
+  --color-exile-100: #DDE1FB;
+  --color-exile-200: #BFC4F0;
+  --color-exile-700: #5B62AD;
+
+  /* --- Role: Manager — warm amber, structured/anticipatory --- */
+  --color-manager-50:  #FFFBEB;
+  --color-manager-100: #FEF3C7;
+  --color-manager-200: #FDE68A;
+  --color-manager-700: #B45309;
+
+  /* --- Role: Firefighter — warm rose, urgent/reactive --- */
+  --color-firefighter-50:  #FFF1F2;
+  --color-firefighter-100: #FFE4E6;
+  --color-firefighter-200: #FECDD3;
+  --color-firefighter-700: #BE123C;
+
+  /* --- Shadows --- */
+  --shadow-card:  0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-float: 0 4px 24px -4px rgb(0 0 0 / 0.07), 0 2px 8px -2px rgb(0 0 0 / 0.04);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-canvas);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
+    font-family: var(--font-sans);
+  }
+}

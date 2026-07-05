@@ -1,0 +1,29 @@
+# Node
+node_modules/
+.pnpm-store/
+
+# SvelteKit
+frontend/.svelte-kit/
+frontend/build/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/*.suo
+backend/.vs/
+backend/**/*.Development.json
+backend/**/appsettings.Production.json
+backend/**/*.pfx
+backend/**/*.p12
+
+# Claude Code local settings
+.claude/
+
+# Misc
+.DS_Store
+*.log
+dist/
