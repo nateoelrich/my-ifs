@@ -3,9 +3,11 @@
 	import { base } from '$app/paths';
 	import { fade } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
-	import { MOOD_EMOJIS } from '$lib/data/session-constants';
+	import { t } from '$lib/i18n.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
+
+	const MOOD_EMOJIS: Record<number, string> = { 1: '😔', 2: '😕', 3: '😐', 4: '🙂', 5: '😌' };
 
 	let moodScore = $state<number | undefined>(undefined);
 	let selfEnergyScore = $state<number | undefined>(undefined);
@@ -38,25 +40,25 @@
 </script>
 
 <header class="sticky top-0 z-10 bg-canvas/80 backdrop-blur-sm border-b border-stone-100/60 px-6 py-3 flex items-center">
-	<a href="{base}/sessions" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">← Journal</a>
+	<a href="{base}/sessions" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">{t('daily.header')}</a>
 </header>
 
 <main class="max-w-lg mx-auto px-4 py-8 sm:py-12">
 	{#if saved}
 		<div class="text-center py-20" in:fade>
 			<div class="text-4xl mb-4">✓</div>
-			<p class="font-serif text-xl text-stone-700">Saved. Take care today.</p>
+			<p class="font-serif text-xl text-stone-700">{t('daily.saved')}</p>
 		</div>
 	{:else}
 		<div class="mb-8">
-			<h1 class="font-serif text-2xl text-stone-700 mb-1">Daily Check-In</h1>
-			<p class="text-stone-400 text-sm">A quick moment to notice what's alive inside.</p>
+			<h1 class="font-serif text-2xl text-stone-700 mb-1">{t('daily.title')}</h1>
+			<p class="text-stone-400 text-sm">{t('daily.subtitle')}</p>
 		</div>
 
 		<div class="space-y-8">
 			<!-- Mood -->
 			<section class="space-y-3">
-				<p class="text-sm font-medium text-stone-600">How are you overall?</p>
+				<p class="text-sm font-medium text-stone-600">{t('daily.moodQuestion')}</p>
 				<div class="flex gap-3">
 					{#each [1, 2, 3, 4, 5] as n}
 						<button
@@ -65,7 +67,7 @@
 							class="flex-1 aspect-square rounded-xl border-2 text-2xl transition-all flex items-center justify-center"
 							class:ring-2={moodScore === n}
 							style={moodScore === n ? 'border-color: #7c3aed; ring-color: #7c3aed;' : 'border-color: #e7e5e4;'}
-							aria-label="Mood {n} — {MOOD_EMOJIS[n]}"
+							aria-label="{t('daily.moodAriaLabel', { n: String(n) })} — {MOOD_EMOJIS[n]}"
 						>
 							{MOOD_EMOJIS[n]}
 						</button>
@@ -75,7 +77,7 @@
 
 			<!-- Self-energy -->
 			<section class="space-y-3">
-				<p class="text-sm font-medium text-stone-600">How much Self-energy do you feel?</p>
+				<p class="text-sm font-medium text-stone-600">{t('daily.selfEnergyQuestion')}</p>
 				<div class="flex gap-2 items-center">
 					{#each [1, 2, 3, 4, 5] as n}
 						<button
@@ -90,7 +92,13 @@
 						</button>
 					{/each}
 					<span class="text-xs text-stone-400 ml-1 whitespace-nowrap">
-						{selfEnergyScore === undefined ? '' : selfEnergyScore <= 2 ? 'Low' : selfEnergyScore <= 3 ? 'Some' : 'Strong'}
+						{selfEnergyScore === undefined
+							? ''
+							: selfEnergyScore <= 2
+								? t('daily.selfEnergyLow')
+								: selfEnergyScore <= 3
+									? t('daily.selfEnergyMid')
+									: t('daily.selfEnergyHigh')}
 					</span>
 				</div>
 			</section>
@@ -98,7 +106,7 @@
 			<!-- Active parts -->
 			{#if dataStore.parts.length > 0}
 				<section class="space-y-3">
-					<p class="text-sm font-medium text-stone-600">Which parts feel present today?</p>
+					<p class="text-sm font-medium text-stone-600">{t('daily.partsQuestion')}</p>
 					<div class="flex flex-wrap gap-2">
 						{#each dataStore.parts as part}
 							{@const on = activeParts.includes(part.id)}
@@ -120,11 +128,11 @@
 
 			<!-- Message from parts -->
 			<section class="space-y-3">
-				<p class="text-sm font-medium text-stone-600">Is there anything a part wants you to know today?</p>
+				<p class="text-sm font-medium text-stone-600">{t('daily.partsMessageQuestion')}</p>
 				<textarea
 					bind:value={partsMessage}
 					rows={3}
-					placeholder="Whatever comes up…"
+					placeholder={t('daily.partsMessagePlaceholder')}
 					class="w-full rounded-xl border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-400"
 				></textarea>
 			</section>
@@ -134,7 +142,7 @@
 				onclick={save}
 				class="w-full bg-primary-600 hover:bg-primary-700 text-white rounded-xl py-3.5 text-sm font-medium transition-colors"
 			>
-				Save check-in
+				{t('daily.save')}
 			</button>
 		</div>
 	{/if}

@@ -3,18 +3,18 @@ import type { PartRoleType } from './types';
 export const DEFAULT_PART_COLOR = '#9E968E';
 
 export const PART_SWATCHES = [
-	{ hex: '#D4A5A5', label: 'Dusty rose' },
-	{ hex: '#E08B6E', label: 'Coral' },
-	{ hex: '#E8C456', label: 'Amber' },
-	{ hex: '#8CBD9A', label: 'Sage' },
-	{ hex: '#4EC9B8', label: 'Teal' },
-	{ hex: '#6DB5E0', label: 'Sky' },
-	{ hex: '#7B8EC8', label: 'Indigo' },
-	{ hex: '#A08DC0', label: 'Violet' },
-	{ hex: '#8A9BB0', label: 'Slate' },
-	{ hex: '#9E968E', label: 'Warm gray' },
-	{ hex: '#3D8A72', label: 'Spruce' },
-	{ hex: '#7BA7C2', label: 'Dusty blue' }
+	{ hex: '#D4A5A5', id: 'dustyRose', label: 'Dusty rose' },
+	{ hex: '#E08B6E', id: 'coral', label: 'Coral' },
+	{ hex: '#E8C456', id: 'amber', label: 'Amber' },
+	{ hex: '#8CBD9A', id: 'sage', label: 'Sage' },
+	{ hex: '#4EC9B8', id: 'teal', label: 'Teal' },
+	{ hex: '#6DB5E0', id: 'sky', label: 'Sky' },
+	{ hex: '#7B8EC8', id: 'indigo', label: 'Indigo' },
+	{ hex: '#A08DC0', id: 'violet', label: 'Violet' },
+	{ hex: '#8A9BB0', id: 'slate', label: 'Slate' },
+	{ hex: '#9E968E', id: 'warmGray', label: 'Warm gray' },
+	{ hex: '#3D8A72', id: 'spruce', label: 'Spruce' },
+	{ hex: '#7BA7C2', id: 'dustyBlue', label: 'Dusty blue' }
 ] as const;
 
 export const EMOTION_SUGGESTIONS = [

@@ -12,9 +12,9 @@
 		TRIGGER_SUGGESTIONS,
 		FEAR_SUGGESTIONS,
 		ROLE_CONFIGS,
-		ROLE_BADGE_MAP,
-		ROLE_LABEL_MAP
+		ROLE_BADGE_MAP
 	} from '$lib/data/part-constants';
+	import { t } from '$lib/i18n.svelte';
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
@@ -22,20 +22,7 @@
 
 	const DRAFT_KEY = 'ifs_part_draft';
 
-	const steps = [
-		{ id: 'name',     title: 'Name',        question: 'What would you call this part?' },
-		{ id: 'body',     title: 'Body',         question: 'Where do you feel this part in your body?' },
-		{ id: 'image',    title: 'Image',        question: 'If this part had a form or image, what would it look like?' },
-		{ id: 'emotions', title: 'Emotions',     question: 'What emotions does this part carry?' },
-		{ id: 'beliefs',  title: 'Beliefs',      question: 'What does this part believe?' },
-		{ id: 'triggers', title: 'Triggers',     question: 'What tends to activate this part?' },
-		{ id: 'intention',title: 'Intention',    question: 'What is this part trying to protect you from?' },
-		{ id: 'origin',   title: 'Origin',       question: 'When did this part take on this role?' },
-		{ id: 'role',     title: 'Role',         question: 'Which type resonates most?' },
-		{ id: 'needs',    title: 'Needs & Gifts', question: 'What does this part need from you?' },
-		{ id: 'review',   title: 'Review',       question: 'Here is what you discovered' }
-	];
-
+	const STEP_IDS = ['name', 'body', 'image', 'emotions', 'beliefs', 'triggers', 'intention', 'origin', 'role', 'needs', 'review'];
 
 	function loadDraft(): Partial<CreatePartInput> {
 		if (!browser) return {};
@@ -100,7 +87,7 @@
 
 	function next() {
 		direction = 1;
-		if (currentStep < steps.length - 1) currentStep++;
+		if (currentStep < STEP_IDS.length - 1) currentStep++;
 	}
 
 	function back() {
@@ -110,7 +97,7 @@
 
 	function submit() {
 		if (!name.trim()) {
-			error = 'Name is required.';
+			error = t('partWizard.nameRequired');
 			return;
 		}
 		error = '';
@@ -139,14 +126,16 @@
 			clearDraft();
 			goto(`${base}/parts/${part.id}`);
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save.';
+			error = err instanceof Error ? err.message : t('common.failedToSave');
 		}
 	}
+
+	const stepId = $derived(currentStep >= 0 ? STEP_IDS[currentStep] : '');
 </script>
 
 <!-- Minimal wizard header -->
 <header class="sticky top-0 z-10 bg-canvas/80 backdrop-blur-sm border-b border-stone-100/60 px-6 py-3 flex items-center">
-	<a href="{base}/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">← Parts</a>
+	<a href="{base}/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">{t('parts.view.backToParts')}</a>
 </header>
 
 <main class="max-w-2xl mx-auto px-4 py-6 sm:py-10">
@@ -154,10 +143,10 @@
 	{#if currentStep >= 0}
 		<div class="mb-8 text-center">
 			<p class="text-xs font-medium text-stone-400 uppercase tracking-widest mb-3">
-				{steps[currentStep].title}
+				{t(`partWizard.steps.${stepId}.title`)}
 			</p>
 			<div class="flex items-center justify-center gap-2">
-				{#each steps as _, i}
+				{#each STEP_IDS as _, i}
 					<div class="rounded-full transition-all duration-300 {
 						i < currentStep
 							? 'w-2 h-2 bg-primary-400'
@@ -202,13 +191,13 @@
 				</div>
 				{#if roleType}
 					<span class="text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0 {ROLE_BADGE_MAP[roleType] ?? ROLE_BADGE_MAP.unknown}">
-						{ROLE_LABEL_MAP[roleType] ?? roleType}
+						{t(`roles.${roleType}.label`)}
 					</span>
 				{/if}
 			</div>
 		{/if}
 
-		<!-- Animated step content — CSS variables cascade to all inputs in this subtree -->
+		<!-- Animated step content -->
 		<div class="wizard-field px-5 pt-8 sm:px-10 sm:pt-10" style="min-height: 360px;">
 			{#key currentStep}
 				<div
@@ -221,13 +210,13 @@
 						<div class="text-center py-8 max-w-sm mx-auto">
 							<div class="w-12 h-px bg-stone-200 mx-auto mb-8"></div>
 							<h2 class="font-serif text-xl sm:text-2xl text-stone-700 mb-5 leading-relaxed">
-								Take a moment to settle in.
+								{t('partWizard.intro.settle')}
 							</h2>
 							<p class="text-stone-500 text-base leading-relaxed">
-								You're about to get to know a part of yourself — one of the inner voices or feelings that shapes how you move through the world.
+								{t('partWizard.intro.description')}
 							</p>
 							<p class="text-stone-400 text-sm leading-relaxed mt-4">
-								Approach with curiosity rather than judgment.
+								{t('partWizard.intro.curiosity')}
 							</p>
 							<div class="w-12 h-px bg-stone-200 mx-auto mt-8"></div>
 						</div>
@@ -236,27 +225,27 @@
 					{:else if currentStep === 0}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[0].question}</h2>
-								<p class="text-stone-400 text-sm">Give it a name that feels right — descriptive, metaphorical, or literal.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.name.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.name.hint')}</p>
 							</div>
 							<input
 								type="text"
 								bind:value={name}
-								placeholder="e.g. The Inner Critic, The Protector, Little One"
+								placeholder={t('partWizard.placeholders.name')}
 								class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent"
 								autofocus
 							/>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-500">Nickname <span class="text-stone-400">(optional — shorter name for visualization)</span></label>
+								<label class="block text-sm text-stone-500">{t('partWizard.labels.nickname')} <span class="text-stone-400">{t('partWizard.labels.nicknameHint')}</span></label>
 								<input
 									type="text"
 									bind:value={nickname}
-									placeholder="A shorter name for the map"
+									placeholder={t('partWizard.labels.nicknameShortPlaceholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm"
 								/>
 							</div>
 							<div class="space-y-2">
-								<label class="block text-sm text-stone-500">Color <span class="text-stone-400">(pick one that feels like this part)</span></label>
+								<label class="block text-sm text-stone-500">{t('partWizard.labels.color')} <span class="text-stone-400">{t('partWizard.labels.colorHint')}</span></label>
 								<ColorPicker bind:value={color} />
 							</div>
 						</div>
@@ -265,24 +254,24 @@
 					{:else if currentStep === 1}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[1].question}</h2>
-								<p class="text-stone-400 text-sm">Take a moment to close your eyes, turn your attention inward, and notice where you sense this part.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.body.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.body.hint')}</p>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Location</label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.location')}</label>
 								<input
 									type="text"
 									bind:value={bodyLocation}
-									placeholder='e.g. "a knot in my gut", "tightness in my chest"'
+									placeholder={t('partWizard.placeholders.bodyLocation')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm"
 								/>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Sensation</label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.sensation')}</label>
 								<textarea
 									bind:value={bodySensation}
 									rows={3}
-									placeholder='e.g. "heavy, hollow, tight, warm, electric, frozen"'
+									placeholder={t('partWizard.placeholders.bodySensation')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
@@ -292,21 +281,21 @@
 					{:else if currentStep === 2}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[2].question}</h2>
-								<p class="text-stone-400 text-sm">Let an image arise naturally — it might be a person, creature, object, or scene.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.image.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.image.hint')}</p>
 							</div>
 							<textarea
 								bind:value={image}
 								rows={3}
-								placeholder='e.g. "a scared child", "a dragon", "a tough teenager with crossed arms"'
+								placeholder={t('partWizard.placeholders.image')}
 								class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 							></textarea>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Apparent age or life stage</label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.apparentAge')}</label>
 								<input
 									type="text"
 									bind:value={apparentAge}
-									placeholder='e.g. "8 years old", "a teenager", "ancient"'
+									placeholder={t('partWizard.placeholders.apparentAge')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm"
 								/>
 							</div>
@@ -316,8 +305,8 @@
 					{:else if currentStep === 3}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[3].question}</h2>
-								<p class="text-stone-400 text-sm">Tap to select feelings this part carries, or type your own.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.emotions.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.emotions.hint')}</p>
 							</div>
 							<TagInput bind:tags={emotions} suggestions={EMOTION_SUGGESTIONS} placeholder="Or type your own…" pillMode={true} accentColor={color} />
 						</div>
@@ -326,8 +315,8 @@
 					{:else if currentStep === 4}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[4].question}</h2>
-								<p class="text-stone-400 text-sm">What does this part believe about you, the world, or what will happen?</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.beliefs.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.beliefs.hint')}</p>
 							</div>
 							<TagInput bind:tags={beliefs} suggestions={BELIEF_SUGGESTIONS} placeholder="Or describe your own belief…" pillMode={true} accentColor={color} />
 						</div>
@@ -336,8 +325,8 @@
 					{:else if currentStep === 5}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[5].question}</h2>
-								<p class="text-stone-400 text-sm">What situations, people, or experiences tend to bring this part forward?</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.triggers.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.triggers.hint')}</p>
 							</div>
 							<TagInput bind:tags={triggers} suggestions={TRIGGER_SUGGESTIONS} placeholder="Or describe a trigger…" pillMode={true} accentColor={color} />
 						</div>
@@ -346,23 +335,23 @@
 					{:else if currentStep === 6}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[6].question}</h2>
-								<p class="text-stone-400 text-sm">Every part has a positive intention — something it is trying to do for you, even when the strategy feels harmful.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.intention.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.intention.hint')}</p>
 							</div>
 							<div class="space-y-1">
 								<label class="block text-sm text-stone-600 flex items-center">
-									Positive intention
-									<Tooltip text="Every part has a positive intention — something it believes it's doing for you, even when its behavior feels harmful. Discovering this shifts the relationship from adversarial to collaborative." />
+									{t('partWizard.labels.positiveIntention')}
+									<Tooltip text={t('partWizard.labels.positiveIntentionTooltip')} />
 								</label>
 								<textarea
 									bind:value={positiveIntention}
 									rows={3}
-									placeholder='e.g. "Keep me from being humiliated again", "Make sure I work hard enough"'
+									placeholder={t('partWizard.placeholders.positiveIntention')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">What would it fear if it stopped?</label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.whatIfItStopped')}</label>
 								<TagInput bind:tags={fears} suggestions={FEAR_SUGGESTIONS} placeholder="Or describe a fear…" pillMode={true} accentColor={color} />
 							</div>
 						</div>
@@ -371,27 +360,27 @@
 					{:else if currentStep === 7}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[7].question}</h2>
-								<p class="text-stone-400 text-sm">Parts often emerge in response to experiences that happened to you. When was this part "born"?</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.origin.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.origin.hint')}</p>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Life stage or approximate age</label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.lifeStage')}</label>
 								<input
 									type="text"
 									bind:value={originLifeStage}
-									placeholder="e.g. &quot;childhood&quot;, &quot;age 7&quot;, &quot;my parents' divorce&quot;"
+									placeholder={t('partWizard.labels.lifeStage')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm"
 								/>
 							</div>
 							<div class="space-y-1">
 								<label class="block text-sm text-stone-600 flex items-center">
-									Origin story <span class="text-stone-400 ml-1">(optional)</span>
-									<Tooltip text="Parts take on protective roles in response to specific experiences — usually in childhood. Understanding when and why a part formed builds compassion for it rather than frustration." />
+									{t('partWizard.labels.originStory')} <span class="text-stone-400 ml-1">{t('partWizard.labels.originStoryHint')}</span>
+									<Tooltip text={t('partWizard.labels.originStoryTooltip')} />
 								</label>
 								<textarea
 									bind:value={originStory}
 									rows={4}
-									placeholder="What was happening? What did this part witness or experience that caused it to take on this role?"
+									placeholder={t('partWizard.placeholders.originStory')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
@@ -401,8 +390,8 @@
 					{:else if currentStep === 8}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[8].question}</h2>
-								<p class="text-stone-400 text-sm">In IFS, parts tend to fall into three roles. It's okay to be unsure — this is just a starting point.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.role.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.role.hint')}</p>
 							</div>
 							<div class="space-y-3">
 								{#each ROLE_CONFIGS as role}
@@ -418,10 +407,10 @@
 										<div class="flex-1">
 											<div class="flex items-center gap-2 mb-1">
 												<span class="text-base leading-none text-stone-400" aria-hidden="true">{role.icon}</span>
-												<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border {role.colorClass}">{role.label}</span>
-												<span class="text-xs text-stone-400 italic">{role.metaphor}</span>
+												<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border {role.colorClass}">{t(`roles.${role.value}.label`)}</span>
+												<span class="text-xs text-stone-400 italic">{t(`roles.${role.value}.metaphor`)}</span>
 											</div>
-											<p class="text-stone-500 text-sm leading-relaxed">{role.description}</p>
+											<p class="text-stone-500 text-sm leading-relaxed">{t(`roles.${role.value}.description`)}</p>
 										</div>
 									</label>
 								{/each}
@@ -432,39 +421,39 @@
 					{:else if currentStep === 9}
 						<div class="space-y-5">
 							<div>
-								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{steps[9].question}</h2>
-								<p class="text-stone-400 text-sm">When parts feel seen and cared for, they can relax their extreme role and offer their gifts.</p>
+								<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">{t('partWizard.steps.needs.question')}</h2>
+								<p class="text-stone-400 text-sm">{t('partWizard.steps.needs.hint')}</p>
 							</div>
 							<div class="space-y-1">
 								<label class="block text-sm text-stone-600 flex items-center">
-									What does this part need from your Self?
-									<Tooltip text="Self is your calm, compassionate core — distinct from your parts. When Self offers understanding or presence to a part, the part often relaxes and no longer needs to be extreme." />
+									{t('partWizard.labels.needsFromSelf')}
+									<Tooltip text={t('partWizard.labels.needsTooltip')} />
 								</label>
 								<textarea
 									bind:value={whatItNeedsFromSelf}
 									rows={3}
-									placeholder="e.g. To be heard, To know I'm safe now"
+									placeholder={t('partWizard.placeholders.needsFromSelf')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
 							<div class="space-y-1">
 								<label class="block text-sm text-stone-600 flex items-center">
-									What gifts might it offer when unburdened? <span class="text-stone-400 ml-1">(optional)</span>
-									<Tooltip text="Unburdening is when a part releases the extreme beliefs and emotions it took on during painful experiences. Freed of those burdens, it naturally offers its positive qualities — courage, aliveness, playfulness." />
+									{t('partWizard.labels.giftsWhenUnburdened')} <span class="text-stone-400 ml-1">{t('partWizard.labels.giftsHint')}</span>
+									<Tooltip text={t('partWizard.labels.giftsTooltip')} />
 								</label>
 								<textarea
 									bind:value={giftsWhenUnburdened}
 									rows={3}
-									placeholder='e.g. "Healthy assertiveness", "Protective instincts without rage", "Genuine confidence"'
+									placeholder={t('partWizard.placeholders.giftsWhenUnburdened')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Notes <span class="text-stone-400">(optional)</span></label>
+								<label class="block text-sm text-stone-600">{t('partWizard.labels.notes')} <span class="text-stone-400">{t('partWizard.labels.notesHint')}</span></label>
 								<textarea
 									bind:value={notes}
 									rows={3}
-									placeholder="Anything else you want to remember about this part"
+									placeholder={t('partWizard.placeholders.notes')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-transparent text-sm resize-none"
 								></textarea>
 							</div>
@@ -481,14 +470,14 @@
 									<PartAvatar size="xl" color={color} name={name || 'Part'} />
 								</div>
 								<h2 class="font-serif text-xl sm:text-2xl text-stone-800">
-									You've come to know {name || 'this part'}
+									{t('partWizard.review.youveKnown', { name: name || t('parts.title') })}
 								</h2>
 								{#if nickname}
 									<p class="text-stone-400 italic text-sm mt-1">"{nickname}"</p>
 								{/if}
 								{#if roleType}
 									<span class="inline-block mt-3 text-xs font-medium px-3 py-1 rounded-full {ROLE_BADGE_MAP[roleType] ?? ROLE_BADGE_MAP.unknown}">
-										{roleType}
+										{t(`roles.${roleType}.label`)}
 									</span>
 								{/if}
 							</div>
@@ -496,21 +485,21 @@
 							<div class="space-y-3 text-sm">
 								{#if bodyLocation}
 									<div class="bg-canvas-muted rounded-xl p-4">
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">Body</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">{t('parts.sections.body')}</p>
 										<p class="text-stone-700">{bodyLocation}{bodySensation ? ` — ${bodySensation}` : ''}</p>
 									</div>
 								{/if}
 
 								{#if image}
 									<div class="bg-canvas-muted rounded-xl p-4">
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">Image{apparentAge ? ` · ${apparentAge}` : ''}</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">{t('parts.sections.image')}{apparentAge ? ` · ${apparentAge}` : ''}</p>
 										<p class="text-stone-700 italic">"{image}"</p>
 									</div>
 								{/if}
 
 								{#if emotions.length > 0}
 									<div>
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-2">Emotions</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-2">{t('parts.sections.emotions')}</p>
 										<div class="flex flex-wrap gap-1.5">
 											{#each emotions as e}
 												<span
@@ -524,7 +513,7 @@
 
 								{#if beliefs.length > 0}
 									<div>
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-2">Beliefs</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-2">{t('parts.sections.beliefs')}</p>
 										<ul class="space-y-1">
 											{#each beliefs as b}
 												<li class="text-stone-700">• {b}</li>
@@ -535,14 +524,14 @@
 
 								{#if positiveIntention}
 									<div class="bg-canvas-muted rounded-xl p-4">
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">Positive Intention</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">{t('parts.sections.positiveIntention')}</p>
 										<p class="text-stone-700">{positiveIntention}</p>
 									</div>
 								{/if}
 
 								{#if originLifeStage}
 									<div class="bg-canvas-muted rounded-xl p-4">
-										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">Origin</p>
+										<p class="text-stone-500 text-xs font-medium uppercase tracking-wide mb-1">{t('parts.sections.origin')}</p>
 										<p class="text-stone-700 font-medium">{originLifeStage}</p>
 										{#if originStory}<p class="text-stone-600 mt-1">{originStory}</p>{/if}
 									</div>
@@ -550,8 +539,7 @@
 
 								{#if whatItNeedsFromSelf}
 									<div class="rounded-xl p-4" style="background-color: {color}18;">
-										<p class="text-xs font-medium uppercase tracking-wide mb-1" style="color: {color};"
-											>Needs from Self</p>
+										<p class="text-xs font-medium uppercase tracking-wide mb-1" style="color: {color};">{t('parts.sections.needsFromSelf')}</p>
 										<p class="text-stone-800">{whatItNeedsFromSelf}</p>
 									</div>
 								{/if}
@@ -571,7 +559,7 @@
 					onclick={next}
 					class="wizard-btn text-white rounded-xl px-10 py-3 text-sm font-medium tracking-wide"
 				>
-					I'm ready
+					{t('partWizard.intro.ready')}
 				</button>
 			</div>
 		{:else}
@@ -581,18 +569,18 @@
 					onclick={back}
 					class="text-stone-500 hover:text-stone-800 text-sm transition-colors py-3 px-1 {currentStep === 0 ? 'invisible' : ''}"
 				>
-					← Back
+					{t('partWizard.nav.back')}
 				</button>
 
 				<div class="flex gap-3">
-					{#if currentStep < steps.length - 1}
+					{#if currentStep < STEP_IDS.length - 1}
 						{#if currentStep > 0}
 							<button
 								type="button"
 								onclick={next}
 								class="text-stone-400 hover:text-stone-600 text-sm transition-colors py-3 px-2"
 							>
-								Skip
+								{t('partWizard.nav.skip')}
 							</button>
 						{/if}
 						<button
@@ -601,7 +589,7 @@
 							disabled={!canAdvance()}
 							class="wizard-btn text-white rounded-lg px-6 py-3 text-sm font-medium"
 						>
-							{currentStep === 0 ? 'Begin' : 'Continue'}
+							{currentStep === 0 ? t('partWizard.nav.begin') : t('partWizard.nav.continue')}
 						</button>
 					{:else}
 						<button
@@ -609,7 +597,7 @@
 							onclick={submit}
 							class="wizard-btn text-white rounded-lg px-8 py-3 text-sm font-medium"
 						>
-							Save this part
+							{t('partWizard.nav.save')}
 						</button>
 					{/if}
 				</div>
@@ -617,11 +605,10 @@
 		{/if}
 	</div>
 
-	<p class="text-center text-xs text-stone-300 mt-5">Your progress is saved automatically</p>
+	<p class="text-center text-xs text-stone-300 mt-5">{t('partWizard.autosave')}</p>
 </main>
 
 <style>
-	/* Inputs: use selected part color for focus ring */
 	.wizard-field input:focus,
 	.wizard-field textarea:focus {
 		outline: none;
@@ -629,7 +616,6 @@
 		box-shadow: 0 0 0 3px var(--part-ring);
 	}
 
-	/* Primary action buttons: use selected part color, gray when disabled */
 	.wizard-btn {
 		background-color: var(--part-color);
 		transition: filter 0.15s, background-color 0.3s;
@@ -638,8 +624,8 @@
 		filter: brightness(0.88);
 	}
 	.wizard-btn[disabled] {
-		background-color: #d6d3d1; /* stone-300 */
-		color: #a8a29e;            /* stone-400 */
+		background-color: #d6d3d1;
+		color: #a8a29e;
 		cursor: not-allowed;
 	}
 </style>

@@ -4,7 +4,7 @@
 	import { fly, fade, slide } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
 	import { EMOTION_SUGGESTIONS } from '$lib/data/part-constants';
-	import { SELF_LED_FEELINGS, BLENDED_FEELINGS } from '$lib/data/session-constants';
+	import { t, tArray } from '$lib/i18n.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import SelfEnergyCheck from '$lib/components/SelfEnergyCheck.svelte';
@@ -12,16 +12,7 @@
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 
-	const STEPS = [
-		{ id: 'ground',     title: 'Ground' },
-		{ id: 'body',       title: 'Body' },
-		{ id: 'emotions',   title: 'Emotions' },
-		{ id: 'recognize',  title: 'Recognize' },
-		{ id: 'stepback',   title: 'Step Back' },
-		{ id: 'understand', title: 'Understand' },
-		{ id: 'need',       title: 'Need' },
-		{ id: 'close',      title: 'Close' }
-	];
+	const STEP_IDS = ['ground', 'body', 'emotions', 'recognize', 'stepback', 'understand', 'need', 'close'];
 
 	let step = $state(0);
 	let direction = $state(1);
@@ -35,7 +26,7 @@
 	let emotions = $state<string[]>([]);
 	let linkedPartId = $state<string | undefined>(undefined);
 	let newPartName = $state('');
-	let feelingToward = $state('');           // one of SELF_LED_FEELINGS or BLENDED_FEELINGS
+	let feelingToward = $state('');
 	let selfEnergyQualities = $state<string[]>([]);
 	let whatIsItDoing = $state('');
 	let whatDoesItNeed = $state('');
@@ -44,13 +35,11 @@
 
 	const linkedPart = $derived(linkedPartId ? dataStore.getPart(linkedPartId) : null);
 
-	const isBlended = $derived(
-		BLENDED_FEELINGS.includes(feelingToward as (typeof BLENDED_FEELINGS)[number])
-	);
+	const isBlended = $derived(tArray('blendedFeelings').includes(feelingToward));
 
 	function next() {
 		direction = 1;
-		if (step < STEPS.length - 1) step++;
+		if (step < STEP_IDS.length - 1) step++;
 	}
 
 	function back() {
@@ -80,16 +69,17 @@
 			saved = true;
 			setTimeout(() => goto(`${base}/sessions/${session.id}`), 1200);
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save.';
+			error = err instanceof Error ? err.message : t('common.failedToSave');
 		}
 	}
 
 	const accent = $derived(linkedPart?.color ?? '#7c3aed');
+	const stepId = $derived(STEP_IDS[step]);
 </script>
 
 <!-- Minimal header -->
 <header class="sticky top-0 z-10 bg-canvas/80 backdrop-blur-sm border-b border-stone-100/60 px-6 py-3 flex items-center">
-	<a href="{base}/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">← Parts</a>
+	<a href="{base}/parts" class="text-sm text-stone-400 hover:text-stone-600 transition-colors min-h-[44px] flex items-center">{t('checkIn.header.back')}</a>
 </header>
 
 <main class="max-w-2xl mx-auto px-4 py-6 sm:py-10">
@@ -97,18 +87,18 @@
 	{#if saved}
 		<div class="text-center py-20" in:fade>
 			<div class="text-4xl mb-4">✓</div>
-			<p class="font-serif text-xl text-stone-700">Saved.</p>
-			<p class="text-stone-400 text-sm mt-2">Taking you to your session…</p>
+			<p class="font-serif text-xl text-stone-700">{t('checkIn.saved.heading')}</p>
+			<p class="text-stone-400 text-sm mt-2">{t('checkIn.saved.subtext')}</p>
 		</div>
 	{:else}
 
 		<!-- Progress -->
 		<div class="mb-8 text-center">
 			<p class="text-xs font-medium text-stone-400 uppercase tracking-widest mb-3">
-				{STEPS[step].title}
+				{t(`checkIn.steps.${stepId}.title`)}
 			</p>
 			<div class="flex items-center justify-center gap-1.5">
-				{#each STEPS as _, i}
+				{#each STEP_IDS as _, i}
 					<div class="rounded-full transition-all duration-300 {
 						i < step
 							? 'w-2 h-2 bg-primary-400'
@@ -151,14 +141,14 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										Take a breath. What's going on right now?
+										{t('checkIn.steps.ground.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Describe what just happened or what you're feeling. Keep it simple.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.ground.hint')}</p>
 								</div>
 								<textarea
 									bind:value={context}
 									rows={4}
-									placeholder="e.g. 'I just snapped at my partner and I don't know why' or 'I'm spiraling about work again'"
+									placeholder={t('checkIn.steps.ground.placeholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 								></textarea>
 							</div>
@@ -168,25 +158,25 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										Where do you feel it in your body?
+										{t('checkIn.steps.body.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Close your eyes for a moment and let your attention move inward.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.body.hint')}</p>
 								</div>
 								<div class="space-y-1">
-									<p class="text-sm text-stone-500">Location</p>
+									<p class="text-sm text-stone-500">{t('checkIn.labels.bodyLocation')}</p>
 									<input
 										type="text"
 										bind:value={bodyLocation}
-										placeholder='e.g. "chest tightness", "knot in my gut", "heavy shoulders"'
+										placeholder={t('checkIn.labels.bodyLocationPlaceholder')}
 										class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm focus:outline-none"
 									/>
 								</div>
 								<div class="space-y-1">
-									<p class="text-sm text-stone-500">Quality of the sensation</p>
+									<p class="text-sm text-stone-500">{t('checkIn.labels.bodyQuality')}</p>
 									<textarea
 										bind:value={bodySensation}
 										rows={2}
-										placeholder='e.g. "hot, constricted, electric, hollow, frozen"'
+										placeholder={t('checkIn.labels.bodyQualityPlaceholder')}
 										class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 									></textarea>
 								</div>
@@ -197,11 +187,11 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										What feelings are present?
+										{t('checkIn.steps.emotions.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Tap to select, or type your own.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.emotions.hint')}</p>
 								</div>
-								<TagInput bind:tags={emotions} suggestions={EMOTION_SUGGESTIONS} placeholder="Or name a feeling…" pillMode accentColor={accent} />
+								<TagInput bind:tags={emotions} suggestions={EMOTION_SUGGESTIONS} placeholder={t('checkIn.steps.emotions.placeholder')} pillMode accentColor={accent} />
 							</div>
 
 						<!-- 3: Recognize -->
@@ -209,9 +199,9 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										Does this feel like a part you already know?
+										{t('checkIn.steps.recognize.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Look for a match in your triggers, emotions, or body location.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.recognize.hint')}</p>
 								</div>
 								<PartSelector
 									parts={dataStore.parts}
@@ -220,11 +210,11 @@
 								/>
 								{#if !linkedPartId}
 									<div class="space-y-1 pt-1">
-										<p class="text-sm text-stone-500">Give this part a name if it feels new</p>
+										<p class="text-sm text-stone-500">{t('checkIn.labels.newPartName')}</p>
 										<input
 											type="text"
 											bind:value={newPartName}
-											placeholder="e.g. The Protector, The Anxious One…"
+											placeholder={t('checkIn.labels.newPartPlaceholder')}
 											class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm focus:outline-none"
 										/>
 									</div>
@@ -236,18 +226,18 @@
 							<div class="space-y-6">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										Can you step back from it — just a little?
+										{t('checkIn.steps.stepback.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Notice the part, but try not to be fully inside it. How do you feel toward it right now?</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.stepback.hint')}</p>
 								</div>
 
 								<div class="space-y-2">
 									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide flex items-center">
-										Self-led (curious, open)
-										<Tooltip text="Self is your calm, compassionate core. When Self is present, you can notice a part with curiosity rather than being overwhelmed by it." />
+										{t('checkIn.labels.selfLed')}
+										<Tooltip text={t('checkIn.tooltips.selfLed')} />
 									</p>
 									<div class="flex flex-wrap gap-2">
-										{#each SELF_LED_FEELINGS as f}
+										{#each tArray('selfLedFeelings') as f}
 											<button
 												type="button"
 												onclick={() => (feelingToward = f)}
@@ -264,11 +254,11 @@
 
 								<div class="space-y-2">
 									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide flex items-center">
-										Blended (merged, reactive)
-										<Tooltip text="Blending means a part has taken over and you're fully identified with its perspective — you ARE the anxiety, not watching it. The goal isn't to push the part away, just create a little space." />
+										{t('checkIn.labels.blended')}
+										<Tooltip text={t('checkIn.tooltips.blended')} />
 									</p>
 									<div class="flex flex-wrap gap-2">
-										{#each BLENDED_FEELINGS as f}
+										{#each tArray('blendedFeelings') as f}
 											<button
 												type="button"
 												onclick={() => (feelingToward = f)}
@@ -285,15 +275,15 @@
 
 								{#if isBlended}
 									<div class="rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-sm text-amber-800" transition:slide={{ duration: 200 }}>
-										<p class="font-medium mb-1">You may be blended with this part.</p>
-										<p>That's okay. Take a slow breath. See if any distance is possible — even a few inches. You're not trying to push it away, just create a little space between you and the part.</p>
+										<p class="font-medium mb-1">{t('checkIn.blendedWarning.heading')}</p>
+										<p>{t('checkIn.blendedWarning.body')}</p>
 									</div>
 								{/if}
 
 								<div class="pt-2">
 									<p class="text-sm text-stone-600 mb-3 flex items-center">
-										Which of the 8 C's of Self do you notice right now?
-										<Tooltip text="The 8 C's are the natural qualities of Self: Calm, Curious, Compassionate, Clear, Courageous, Confident, Creative, Connected. The more of these you feel, the more Self is present." />
+										{t('checkIn.labels.eightCsQuestion')}
+										<Tooltip text={t('checkIn.tooltips.eightCs')} />
 									</p>
 									<SelfEnergyCheck bind:selected={selfEnergyQualities} />
 								</div>
@@ -304,14 +294,14 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										What is this part trying to do for you?
+										{t('checkIn.steps.understand.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Every part has a positive intention — something it believes it's protecting you from.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.understand.hint')}</p>
 								</div>
 								<textarea
 									bind:value={whatIsItDoing}
 									rows={4}
-									placeholder="e.g. &quot;It's trying to protect me from being humiliated&quot; or &quot;It wants to keep me safe&quot;"
+									placeholder={t('checkIn.steps.understand.placeholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 								></textarea>
 							</div>
@@ -321,14 +311,14 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										What does this part need from you?
+										{t('checkIn.steps.need.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">What would it be most helpful to offer this part right now — even just as an intention?</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.need.hint')}</p>
 								</div>
 								<textarea
 									bind:value={whatDoesItNeed}
 									rows={4}
-									placeholder='e.g. "It needs me to acknowledge it" or "It needs reassurance that I can handle this"'
+									placeholder={t('checkIn.steps.need.placeholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 								></textarea>
 							</div>
@@ -338,27 +328,27 @@
 							<div class="space-y-5">
 								<div>
 									<h2 class="font-serif text-xl sm:text-2xl text-stone-700 leading-snug mb-1">
-										What do you want to remember from this moment?
+										{t('checkIn.steps.close.question')}
 									</h2>
-									<p class="text-stone-400 text-sm">Any insights, shifts, or things you want to hold onto.</p>
+									<p class="text-stone-400 text-sm">{t('checkIn.steps.close.hint')}</p>
 								</div>
 								<textarea
 									bind:value={whatHelped}
 									rows={3}
-									placeholder="What helped? What shifted? What surprised you?"
+									placeholder={t('checkIn.steps.close.helpedPlaceholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 								></textarea>
 								<textarea
 									bind:value={notes}
 									rows={2}
-									placeholder="Additional notes (optional)"
+									placeholder={t('checkIn.steps.close.notesPlaceholder')}
 									class="w-full rounded-lg border border-stone-200 px-4 py-3 text-stone-800 placeholder-stone-400 text-sm resize-none focus:outline-none"
 								></textarea>
 
 								{#if !linkedPartId && newPartName.trim()}
 									<div class="rounded-xl border px-4 py-3 text-sm" style="border-color: {accent}30; background-color: {accent}0A;">
-										<p class="font-medium text-stone-700 mb-1">You named a new part: <span style="color: {accent};">{newPartName}</span></p>
-										<p class="text-stone-500">After saving, you can identify it fully from the Parts section.</p>
+										<p class="font-medium text-stone-700 mb-1">{t('checkIn.newPartNotice.named')} <span style="color: {accent};">{newPartName}</span></p>
+										<p class="text-stone-500">{t('checkIn.newPartNotice.body')}</p>
 									</div>
 								{/if}
 
@@ -380,18 +370,18 @@
 					class="text-stone-500 hover:text-stone-800 text-sm transition-colors py-3 px-1"
 					class:invisible={step === 0}
 				>
-					← Back
+					{t('checkIn.nav.back')}
 				</button>
 
 				<div class="flex gap-3">
-					{#if step < STEPS.length - 1}
+					{#if step < STEP_IDS.length - 1}
 						{#if step > 0}
 							<button
 								type="button"
 								onclick={next}
 								class="text-stone-400 hover:text-stone-600 text-sm transition-colors py-3 px-2"
 							>
-								Skip
+								{t('checkIn.nav.skip')}
 							</button>
 						{/if}
 						<button
@@ -399,7 +389,7 @@
 							onclick={next}
 							class="ci-btn text-white rounded-lg px-6 py-3 text-sm font-medium"
 						>
-							{step === 0 ? 'Begin' : 'Continue'}
+							{step === 0 ? t('checkIn.nav.begin') : t('checkIn.nav.continue')}
 						</button>
 					{:else}
 						<button
@@ -407,14 +397,14 @@
 							onclick={save}
 							class="ci-btn text-white rounded-lg px-8 py-3 text-sm font-medium"
 						>
-							Save session
+							{t('checkIn.nav.save')}
 						</button>
 					{/if}
 				</div>
 			</div>
 		</div>
 
-		<p class="text-center text-xs text-stone-300 mt-5">All steps after the first are optional</p>
+		<p class="text-center text-xs text-stone-300 mt-5">{t('checkIn.footer')}</p>
 	{/if}
 </main>
 

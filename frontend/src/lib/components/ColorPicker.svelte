@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { PART_SWATCHES, DEFAULT_PART_COLOR } from '$lib/data/part-constants';
+	import { t } from '$lib/i18n.svelte';
 
 	interface Props {
 		value?: string;
@@ -10,11 +11,12 @@
 
 <div class="grid grid-cols-6 gap-2.5">
 	{#each PART_SWATCHES as swatch}
+		{@const label = t(`swatchLabels.${swatch.id}`)}
 		<button
 			type="button"
 			onclick={() => (value = swatch.hex)}
-			title={swatch.label}
-			aria-label="{swatch.label}{value === swatch.hex ? ' (selected)' : ''}"
+			title={label}
+			aria-label="{label}{value === swatch.hex ? ' (selected)' : ''}"
 			class="w-9 h-9 rounded-full transition-all duration-150 relative focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-400 {value === swatch.hex
 				? 'ring-2 ring-offset-2 ring-stone-400 scale-110'
 				: 'opacity-75 hover:opacity-100 hover:scale-105'}"

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import type { Session, Part } from '$lib/data/types';
-	import { SESSION_TYPE_LABELS, PROTOCOL_LABELS } from '$lib/data/session-constants';
 	import { formatDate } from '$lib/utils/format';
+	import { t } from '$lib/i18n.svelte';
 	import PartAvatar from './PartAvatar.svelte';
 
 	interface Props {
@@ -14,8 +14,8 @@
 
 	const label = $derived(
 		session.protocol && session.protocol !== 'free'
-			? PROTOCOL_LABELS[session.protocol]
-			: SESSION_TYPE_LABELS[session.type]
+			? t(`protocolLabels.${session.protocol}`)
+			: t(`sessionTypes.${session.type}`)
 	);
 
 	const accentColor = $derived(linkedPart?.color ?? '#9E968E');
@@ -47,7 +47,7 @@
 				{#if linkedPart}
 					<p class="text-sm font-medium text-stone-700 truncate">{linkedPart.name}</p>
 				{:else if session.newPartName}
-					<p class="text-sm font-medium text-stone-700 truncate">{session.newPartName} <span class="text-stone-400 font-normal">(new)</span></p>
+					<p class="text-sm font-medium text-stone-700 truncate">{session.newPartName} <span class="text-stone-400 font-normal">{t('sessions.newLabel')}</span></p>
 				{/if}
 
 				{#if preview}

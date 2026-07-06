@@ -7,15 +7,14 @@
 	import {
 		DEFAULT_PART_COLOR,
 		ROLE_BADGE_MAP,
-		ROLE_LABEL_MAP,
 		ROLE_CONFIGS,
 		EMOTION_SUGGESTIONS,
 		BELIEF_SUGGESTIONS,
 		TRIGGER_SUGGESTIONS,
 		FEAR_SUGGESTIONS
 	} from '$lib/data/part-constants';
-	import { SESSION_TYPE_LABELS, PROTOCOL_LABELS } from '$lib/data/session-constants';
 	import { formatDate } from '$lib/utils/format';
+	import { t } from '$lib/i18n.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -74,7 +73,7 @@
 	}
 
 	function saveEdit() {
-		if (!eName.trim()) { error = 'Name is required.'; return; }
+		if (!eName.trim()) { error = t('common.nameRequired'); return; }
 		error = '';
 		try {
 			const input: CreatePartInput = {
@@ -100,17 +99,17 @@
 			dataStore.updatePart(id, input);
 			editing = false;
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to save.';
+			error = err instanceof Error ? err.message : t('common.failedToSave');
 		}
 	}
 
 	function handleDelete() {
-		if (!confirm(`Remove "${part?.name}"? This cannot be undone.`)) return;
+		if (!confirm(t('common.deletePartConfirm', { name: part?.name ?? '' }))) return;
 		try {
 			dataStore.deletePart(id);
 			goto(`${base}/parts`);
 		} catch {
-			error = 'Failed to delete.';
+			error = t('common.failedToDelete');
 		}
 	}
 
@@ -123,8 +122,8 @@
 <main class="max-w-3xl mx-auto px-4 py-6 sm:py-8">
 	{#if !part}
 		<div class="text-center py-20 text-stone-400">
-			<p>Part not found.</p>
-			<a href="{base}/parts" class="text-primary-600 hover:underline text-sm mt-4 block">← Back to parts</a>
+			<p>{t('parts.view.notFound')}</p>
+			<a href="{base}/parts" class="text-primary-600 hover:underline text-sm mt-4 block">{t('parts.view.backToPartsLink')}</a>
 		</div>
 
 	{:else}
@@ -139,12 +138,12 @@
 
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 				<div>
-					<a href="{base}/parts" class="text-stone-400 hover:text-stone-600 text-sm transition-colors block mb-2">← Parts</a>
+					<a href="{base}/parts" class="text-stone-400 hover:text-stone-600 text-sm transition-colors block mb-2">{t('parts.view.backToParts')}</a>
 					<h1 class="text-xl sm:text-2xl font-serif text-stone-800">{part.name}</h1>
 					{#if part.nickname}<p class="text-stone-400 text-sm italic">"{part.nickname}"</p>{/if}
 					{#if part.roleType}
 						<span class="inline-block mt-2 text-xs font-medium px-2.5 py-1 rounded-full {ROLE_BADGE_MAP[part.roleType] ?? ROLE_BADGE_MAP.unknown}">
-							{ROLE_LABEL_MAP[part.roleType] ?? part.roleType}
+							{t(`roles.${part.roleType}.label`)}
 						</span>
 					{/if}
 				</div>
@@ -153,20 +152,20 @@
 						<button
 							onclick={() => startEdit(part!)}
 							class="flex-1 sm:flex-none text-sm text-stone-500 hover:text-primary-700 border border-stone-200 hover:border-primary-300 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>Edit</button>
+						>{t('parts.actions.edit')}</button>
 						<button
 							onclick={handleDelete}
 							class="flex-1 sm:flex-none text-sm text-stone-400 hover:text-red-500 border border-stone-200 hover:border-red-200 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>Delete</button>
+						>{t('parts.actions.delete')}</button>
 					{:else}
 						<button
 							onclick={() => (editing = false)}
 							class="flex-1 sm:flex-none text-sm text-stone-500 hover:text-stone-700 border border-stone-200 rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>Cancel</button>
+						>{t('parts.actions.cancel')}</button>
 						<button
 							onclick={saveEdit}
 							class="flex-1 sm:flex-none text-sm bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-2.5 min-h-[44px] transition-colors"
-						>Save</button>
+						>{t('parts.actions.save')}</button>
 					{/if}
 				</div>
 			</div>
@@ -180,14 +179,14 @@
 			<!-- View mode -->
 			<div class="space-y-6">
 				{#if part.bodyLocation || part.bodySensation}
-					<Section title="Body">
+					<Section title={t('parts.sections.body')}>
 						{#if part.bodyLocation}<p class="text-stone-800 font-medium">{part.bodyLocation}</p>{/if}
 						{#if part.bodySensation}<p class="text-stone-600 mt-1">{part.bodySensation}</p>{/if}
 					</Section>
 				{/if}
 
 				{#if part.image}
-					<Section title="Image{part.apparentAge ? ` · ${part.apparentAge}` : ''}">
+					<Section title="{t('parts.sections.image')}{part.apparentAge ? ` · ${part.apparentAge}` : ''}">
 						<p class="text-stone-700 italic">"{part.image}"</p>
 					</Section>
 				{/if}
@@ -196,7 +195,7 @@
 					<Section class="space-y-4">
 						{#if part.emotions?.length > 0}
 							<div>
-								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Emotions</h2>
+								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('parts.sections.emotions')}</h2>
 								<div class="flex flex-wrap gap-2">
 									{#each part.emotions as e}
 										<span class="bg-primary-50 text-primary-700 rounded-full px-3 py-1 text-sm">{e}</span>
@@ -206,7 +205,7 @@
 						{/if}
 						{#if part.beliefs?.length > 0}
 							<div>
-								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Beliefs</h2>
+								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('parts.sections.beliefs')}</h2>
 								<ul class="space-y-1">
 									{#each part.beliefs as b}
 										<li class="text-stone-700 text-sm">• {b}</li>
@@ -216,10 +215,10 @@
 						{/if}
 						{#if part.triggers?.length > 0}
 							<div>
-								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Triggers</h2>
+								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('parts.sections.triggers')}</h2>
 								<div class="flex flex-wrap gap-2">
-									{#each part.triggers as t}
-										<span class="bg-stone-50 text-stone-600 rounded-full px-3 py-1 text-sm border border-stone-100">{t}</span>
+									{#each part.triggers as trigger}
+										<span class="bg-stone-50 text-stone-600 rounded-full px-3 py-1 text-sm border border-stone-100">{trigger}</span>
 									{/each}
 								</div>
 							</div>
@@ -231,13 +230,13 @@
 					<Section class="space-y-4">
 						{#if part.positiveIntention}
 							<div>
-								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Positive Intention</h2>
+								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('parts.sections.positiveIntention')}</h2>
 								<p class="text-stone-700">{part.positiveIntention}</p>
 							</div>
 						{/if}
 						{#if part.fears?.length > 0}
 							<div>
-								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Fears</h2>
+								<h2 class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('parts.sections.fears')}</h2>
 								<div class="flex flex-wrap gap-2">
 									{#each part.fears as f}
 										<span class="bg-stone-50 text-stone-600 rounded-full px-3 py-1 text-sm border border-stone-100">{f}</span>
@@ -249,7 +248,7 @@
 				{/if}
 
 				{#if part.originLifeStage || part.originStory}
-					<Section title="Origin">
+					<Section title={t('parts.sections.origin')}>
 						{#if part.originLifeStage}<p class="text-stone-800 font-medium">{part.originLifeStage}</p>{/if}
 						{#if part.originStory}<p class="text-stone-600 mt-2 whitespace-pre-wrap">{part.originStory}</p>{/if}
 					</Section>
@@ -259,13 +258,13 @@
 					<Section variant="primary" class="space-y-4">
 						{#if part.whatItNeedsFromSelf}
 							<div>
-								<h2 class="text-xs font-medium text-primary-500 uppercase tracking-wide mb-2">Needs from Self</h2>
+								<h2 class="text-xs font-medium text-primary-500 uppercase tracking-wide mb-2">{t('parts.sections.needsFromSelf')}</h2>
 								<p class="text-primary-900">{part.whatItNeedsFromSelf}</p>
 							</div>
 						{/if}
 						{#if part.giftsWhenUnburdened}
 							<div>
-								<h2 class="text-xs font-medium text-primary-500 uppercase tracking-wide mb-2">Gifts When Unburdened</h2>
+								<h2 class="text-xs font-medium text-primary-500 uppercase tracking-wide mb-2">{t('parts.sections.giftsWhenUnburdened')}</h2>
 								<p class="text-primary-900">{part.giftsWhenUnburdened}</p>
 							</div>
 						{/if}
@@ -273,21 +272,21 @@
 				{/if}
 
 				{#if part.notes}
-					<Section title="Notes">
+					<Section title={t('parts.sections.notes')}>
 						<p class="text-stone-600 whitespace-pre-wrap">{part.notes}</p>
 					</Section>
 				{/if}
 
 				<!-- Go deeper: protocol links -->
 				<Section class="space-y-3">
-					<p class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Go Deeper</p>
+					<p class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">{t('parts.view.goDeeper')}</p>
 					<div class="flex flex-wrap gap-2">
 						{#if part.roleType !== 'exile'}
 							<a
 								href="{base}/sessions/new?protocol=6fs&partId={part.id}"
 								class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
 							>
-								Meet this part (6 F's) →
+								{t('parts.view.meetPart')}
 							</a>
 						{/if}
 						{#if part.roleType === 'exile'}
@@ -295,141 +294,143 @@
 								href="{base}/sessions/new?protocol=unburdening&partId={part.id}"
 								class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
 							>
-								Heal this exile →
+								{t('parts.view.healExile')}
 							</a>
 						{/if}
 						<a
 							href="{base}/check-in"
 							class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
 						>
-							Check in now →
+							{t('parts.view.checkInNow')}
 						</a>
 					</div>
 				</Section>
 
 				<!-- Recent sessions -->
 				{#if recentSessions.length > 0}
-					<Section title="Recent Sessions" class="space-y-2">
+					<Section title={t('parts.view.recentSessions')} class="space-y-2">
 						{#each recentSessions as s}
-							{@const slabel = s.protocol && s.protocol !== 'free' ? PROTOCOL_LABELS[s.protocol] : SESSION_TYPE_LABELS[s.type]}
+							{@const slabel = s.protocol && s.protocol !== 'free'
+								? t(`protocolLabels.${s.protocol}`)
+								: t(`sessionTypes.${s.type}`)}
 							<a
 								href="{base}/sessions/{s.id}"
 								class="flex items-center justify-between rounded-lg px-3 py-2.5 border border-stone-100 hover:border-stone-200 bg-stone-50 hover:bg-white transition-all text-sm gap-3"
 							>
 								<div class="flex items-center gap-2 min-w-0">
 									<span class="text-xs px-2 py-0.5 rounded-full flex-shrink-0" style="background-color: {part.color ?? '#7c3aed'}18; color: {part.color ?? '#7c3aed'};">{slabel}</span>
-									<span class="text-stone-500 truncate">{s.context?.slice(0, 50) || s.whatIsItDoing?.slice(0, 50) || 'No notes'}</span>
+									<span class="text-stone-500 truncate">{s.context?.slice(0, 50) || s.whatIsItDoing?.slice(0, 50) || t('parts.view.noNotes')}</span>
 								</div>
 								<span class="text-xs text-stone-300 flex-shrink-0">{formatDate(s.createdAt)}</span>
 							</a>
 						{/each}
 						{#if dataStore.getSessionsForPart(part.id).length > 3}
 							<a href="{base}/sessions" class="text-xs text-primary-600 hover:underline block text-right">
-								View all sessions →
+								{t('parts.view.viewAllSessions')}
 							</a>
 						{/if}
 					</Section>
 				{/if}
 
 				<p class="text-xs text-stone-300 text-right">
-					Created {formatDate(part.createdAt)} · Updated {formatDate(part.updatedAt)}
+					{t('parts.view.createdUpdated', { created: formatDate(part.createdAt), updated: formatDate(part.updatedAt) })}
 				</p>
 			</div>
 
 		{:else}
 			<!-- Edit mode -->
 			<div class="space-y-6">
-				<Section title="Identity" class="space-y-4">
+				<Section title={t('parts.edit.identity')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Name *</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.name')}</label>
 						<input type="text" bind:value={eName} class={inputClass} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Nickname</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.nickname')}</label>
 						<input type="text" bind:value={eNickname} class={inputClass} />
 					</div>
 					<div class="space-y-2">
-						<label class="block text-sm text-stone-600">Color</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.color')}</label>
 						<ColorPicker bind:value={eColor} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Role type</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.roleType')}</label>
 						<select bind:value={eRoleType} class={inputClass}>
-							<option value="">— Not sure yet —</option>
+							<option value="">{t('parts.edit.roleNotSure')}</option>
 							{#each ROLE_CONFIGS as role}
-								<option value={role.value}>{role.label}</option>
+								<option value={role.value}>{t(`roles.${role.value}.label`)}</option>
 							{/each}
 						</select>
 					</div>
 				</Section>
 
-				<Section title="Body & Image" class="space-y-4">
+				<Section title={t('parts.edit.bodyAndImage')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Body location</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.bodyLocation')}</label>
 						<input type="text" bind:value={eBodyLocation} class={inputClass} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Body sensation</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.bodySensation')}</label>
 						<textarea rows={2} bind:value={eBodySensation} class={textareaClass}></textarea>
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Image</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.image')}</label>
 						<textarea rows={2} bind:value={eImage} class={textareaClass}></textarea>
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Apparent age</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.apparentAge')}</label>
 						<input type="text" bind:value={eApparentAge} class={inputClass} />
 					</div>
 				</Section>
 
-				<Section title="Emotions, Beliefs & Triggers" class="space-y-4">
+				<Section title={t('parts.edit.emotionsBeliefsTriggers')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Emotions</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.emotions')}</label>
 						<TagInput bind:tags={eEmotions} suggestions={EMOTION_SUGGESTIONS} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Beliefs</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.beliefs')}</label>
 						<TagInput bind:tags={eBeliefs} suggestions={BELIEF_SUGGESTIONS} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Triggers</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.triggers')}</label>
 						<TagInput bind:tags={eTriggers} suggestions={TRIGGER_SUGGESTIONS} />
 					</div>
 				</Section>
 
-				<Section title="Protective Function" class="space-y-4">
+				<Section title={t('parts.edit.protectiveFunction')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Positive intention</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.positiveIntention')}</label>
 						<textarea rows={3} bind:value={ePositiveIntention} class={textareaClass}></textarea>
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Fears</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.fears')}</label>
 						<TagInput bind:tags={eFears} suggestions={FEAR_SUGGESTIONS} />
 					</div>
 				</Section>
 
-				<Section title="Origin" class="space-y-4">
+				<Section title={t('parts.edit.origin')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Life stage</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.lifeStage')}</label>
 						<input type="text" bind:value={eOriginLifeStage} class={inputClass} />
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Origin story</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.originStory')}</label>
 						<textarea rows={4} bind:value={eOriginStory} class={textareaClass}></textarea>
 					</div>
 				</Section>
 
-				<Section title="Needs & Gifts" class="space-y-4">
+				<Section title={t('parts.edit.needsAndGifts')} class="space-y-4">
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">What it needs from Self</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.needsFromSelf')}</label>
 						<textarea rows={3} bind:value={eWhatItNeedsFromSelf} class={textareaClass}></textarea>
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Gifts when unburdened</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.giftsWhenUnburdened')}</label>
 						<textarea rows={3} bind:value={eGiftsWhenUnburdened} class={textareaClass}></textarea>
 					</div>
 					<div class="space-y-1">
-						<label class="block text-sm text-stone-600">Notes</label>
+						<label class="block text-sm text-stone-600">{t('parts.edit.notes')}</label>
 						<textarea rows={3} bind:value={eNotes} class={textareaClass}></textarea>
 					</div>
 				</Section>

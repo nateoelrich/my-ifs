@@ -1,0 +1,643 @@
+export const en = {
+	nav: {
+		brand: 'My IFS',
+		parts: 'Parts',
+		checkIn: 'Check In',
+		map: 'Map',
+		journal: 'Journal',
+		whatIsIfs: 'What is IFS?',
+		import: 'Import',
+		export: 'Export',
+		languageLabel: 'Language',
+	},
+
+	parts: {
+		title: 'Your Parts',
+		subtitle: "Inner voices and protectors you've come to know",
+		whatAreParts: 'What are parts?',
+		addPart: '+ Identify a Part',
+		feltIn: 'Felt in:',
+		deleteAriaLabel: 'Delete {name}',
+		empty: {
+			tagline: 'Your inner family is waiting to be known',
+			description:
+				'Parts are distinct voices, feelings, and patterns inside you — each trying to help in its own way.',
+			learnLink: 'Learn how IFS works →',
+			start: 'Start by identifying your first part',
+			identifyFirst: 'Identify your first part',
+			restoreBackup: 'restore from backup',
+		},
+		actions: {
+			edit: 'Edit',
+			delete: 'Delete',
+			cancel: 'Cancel',
+			save: 'Save',
+		},
+		view: {
+			backToParts: '← Parts',
+			backToPartsLink: '← Back to parts',
+			notFound: 'Part not found.',
+			createdUpdated: 'Created {created} · Updated {updated}',
+			goDeeper: 'Go Deeper',
+			recentSessions: 'Recent Sessions',
+			viewAllSessions: 'View all sessions →',
+			noNotes: 'No notes',
+			meetPart: "Meet this part (6 F's) →",
+			healExile: 'Heal this exile →',
+			checkInNow: 'Check in now →',
+		},
+		edit: {
+			identity: 'Identity',
+			name: 'Name *',
+			nickname: 'Nickname',
+			color: 'Color',
+			roleType: 'Role type',
+			roleNotSure: '— Not sure yet —',
+			bodyAndImage: 'Body & Image',
+			bodyLocation: 'Body location',
+			bodySensation: 'Body sensation',
+			image: 'Image',
+			apparentAge: 'Apparent age',
+			emotionsBeliefsTriggers: 'Emotions, Beliefs & Triggers',
+			emotions: 'Emotions',
+			beliefs: 'Beliefs',
+			triggers: 'Triggers',
+			protectiveFunction: 'Protective Function',
+			positiveIntention: 'Positive intention',
+			fears: 'Fears',
+			origin: 'Origin',
+			lifeStage: 'Life stage',
+			originStory: 'Origin story',
+			needsAndGifts: 'Needs & Gifts',
+			needsFromSelf: 'What it needs from Self',
+			giftsWhenUnburdened: 'Gifts when unburdened',
+			notes: 'Notes',
+		},
+		sections: {
+			body: 'Body',
+			image: 'Image',
+			emotions: 'Emotions',
+			beliefs: 'Beliefs',
+			triggers: 'Triggers',
+			positiveIntention: 'Positive Intention',
+			fears: 'Fears',
+			origin: 'Origin',
+			needsFromSelf: 'Needs from Self',
+			giftsWhenUnburdened: 'Gifts When Unburdened',
+			notes: 'Notes',
+		},
+	},
+
+	partWizard: {
+		intro: {
+			settle: 'Take a moment to settle in.',
+			description:
+				"You're about to get to know a part of yourself — one of the inner voices or feelings that shapes how you move through the world.",
+			curiosity: 'Approach with curiosity rather than judgment.',
+			ready: "I'm ready",
+		},
+		steps: {
+			name: {
+				title: 'Name',
+				question: 'What would you call this part?',
+				hint: 'Give it a name that feels right — descriptive, metaphorical, or literal.',
+			},
+			body: {
+				title: 'Body',
+				question: 'Where do you feel this part in your body?',
+				hint: 'Take a moment to close your eyes, turn your attention inward, and notice where you sense this part.',
+			},
+			image: {
+				title: 'Image',
+				question: 'If this part had a form or image, what would it look like?',
+				hint: 'Let an image arise naturally — it might be a person, creature, object, or scene.',
+			},
+			emotions: {
+				title: 'Emotions',
+				question: 'What emotions does this part carry?',
+				hint: 'Tap to select feelings this part carries, or type your own.',
+			},
+			beliefs: {
+				title: 'Beliefs',
+				question: 'What does this part believe?',
+				hint: 'What does this part believe about you, the world, or what will happen?',
+			},
+			triggers: {
+				title: 'Triggers',
+				question: 'What tends to activate this part?',
+				hint: 'What situations, people, or experiences tend to bring this part forward?',
+			},
+			intention: {
+				title: 'Intention',
+				question: 'What is this part trying to protect you from?',
+				hint: 'Every part has a positive intention — something it is trying to do for you, even when the strategy feels harmful.',
+			},
+			origin: {
+				title: 'Origin',
+				question: 'When did this part take on this role?',
+				hint: 'Parts often emerge in response to experiences that happened to you. When was this part "born"?',
+			},
+			role: {
+				title: 'Role',
+				question: 'Which type resonates most?',
+				hint: "In IFS, parts tend to fall into three roles. It's okay to be unsure — this is just a starting point.",
+			},
+			needs: {
+				title: 'Needs & Gifts',
+				question: 'What does this part need from you?',
+				hint: 'When parts feel seen and cared for, they can relax their extreme role and offer their gifts.',
+			},
+			review: {
+				title: 'Review',
+				question: 'Here is what you discovered',
+			},
+		},
+		labels: {
+			nickname: 'Nickname',
+			nicknameHint: '(optional — shorter name for visualization)',
+			nicknameShortPlaceholder: 'A shorter name for the map',
+			color: 'Color',
+			colorHint: '(pick one that feels like this part)',
+			location: 'Location',
+			sensation: 'Sensation',
+			apparentAge: 'Apparent age or life stage',
+			positiveIntention: 'Positive intention',
+			positiveIntentionTooltip:
+				"Every part has a positive intention — something it believes it's doing for you, even when its behavior feels harmful. Discovering this shifts the relationship from adversarial to collaborative.",
+			whatIfItStopped: 'What would it fear if it stopped?',
+			lifeStage: 'Life stage or approximate age',
+			originStory: 'Origin story',
+			originStoryHint: '(optional)',
+			originStoryTooltip:
+				'Parts take on protective roles in response to specific experiences — usually in childhood. Understanding when and why a part formed builds compassion for it rather than frustration.',
+			needsFromSelf: 'What does this part need from your Self?',
+			needsTooltip:
+				'Self is your calm, compassionate core — distinct from your parts. When Self offers understanding or presence to a part, the part often relaxes and no longer needs to be extreme.',
+			giftsWhenUnburdened: 'What gifts might it offer when unburdened?',
+			giftsHint: '(optional)',
+			giftsTooltip:
+				'Unburdening is when a part releases the extreme beliefs and emotions it took on during painful experiences. Freed of those burdens, it naturally offers its positive qualities — courage, aliveness, playfulness.',
+			notes: 'Notes',
+			notesHint: '(optional)',
+		},
+		placeholders: {
+			name: 'e.g. The Inner Critic, The Protector, Little One',
+			bodyLocation: 'e.g. "a knot in my gut", "tightness in my chest"',
+			bodySensation: 'e.g. "heavy, hollow, tight, warm, electric, frozen"',
+			image: 'e.g. "a scared child", "a dragon", "a tough teenager with crossed arms"',
+			apparentAge: 'e.g. "8 years old", "a teenager", "ancient"',
+			positiveIntention: 'e.g. "Keep me from being humiliated again", "Make sure I work hard enough"',
+			originStory: 'What was happening? What did this part witness or experience that caused it to take on this role?',
+			needsFromSelf: 'e.g. To be heard, To know I\'m safe now',
+			giftsWhenUnburdened: 'e.g. "Healthy assertiveness", "Protective instincts without rage", "Genuine confidence"',
+			notes: 'Anything else you want to remember about this part',
+		},
+		review: {
+			youveKnown: "You've come to know {name}",
+		},
+		nav: {
+			back: '← Back',
+			skip: 'Skip',
+			continue: 'Continue',
+			begin: 'Begin',
+			save: 'Save this part',
+		},
+		autosave: 'Your progress is saved automatically',
+		nameRequired: 'Name is required.',
+	},
+
+	roles: {
+		exile: {
+			label: 'Exile',
+			metaphor: 'Tender & hidden',
+			description:
+				"Carries pain, shame, or trauma from the past. Often feels young and vulnerable, tucked away where others won't find it.",
+		},
+		manager: {
+			label: 'Manager',
+			metaphor: 'Planning & controlling',
+			description:
+				'Works proactively to prevent exile pain from surfacing. Tends to plan, control, criticize, achieve, and keep everything in order.',
+		},
+		firefighter: {
+			label: 'Firefighter',
+			metaphor: 'Reactive & urgent',
+			description:
+				'Reacts when exile pain breaks through the managers. Uses impulsive, intense behaviors to extinguish overwhelming emotion — fast.',
+		},
+		unknown: {
+			label: 'Not sure yet',
+			metaphor: 'Still discovering',
+			description:
+				"It's okay not to know. This is just a starting point — you can always revisit as your understanding deepens.",
+		},
+	},
+
+	swatchLabels: {
+		dustyRose: 'Dusty rose',
+		coral: 'Coral',
+		amber: 'Amber',
+		sage: 'Sage',
+		teal: 'Teal',
+		sky: 'Sky',
+		indigo: 'Indigo',
+		violet: 'Violet',
+		slate: 'Slate',
+		warmGray: 'Warm gray',
+		spruce: 'Spruce',
+		dustyBlue: 'Dusty blue',
+	},
+
+	emotions: [
+		'fear',
+		'anger',
+		'sadness',
+		'shame',
+		'grief',
+		'anxiety',
+		'loneliness',
+		'worthlessness',
+		'guilt',
+		'hopelessness',
+		'despair',
+		'rage',
+		'hurt',
+		'embarrassment',
+		'jealousy',
+		'panic',
+		'numbness',
+	],
+	beliefs: [
+		"I'm not good enough",
+		"I'll be rejected",
+		"I'll be humiliated",
+		"I'm worthless",
+		'Nobody cares',
+		'I have to be perfect',
+		"It's my fault",
+		"I'm a burden",
+		"I'll fail",
+		"I'm broken",
+	],
+	triggers: [
+		'criticism',
+		'rejection',
+		'conflict',
+		'being ignored',
+		'failure',
+		'being controlled',
+		'uncertainty',
+		'vulnerability',
+		'confrontation',
+		'being rushed',
+		'being evaluated',
+		'feeling unseen',
+		'abandonment',
+		'unpredictability',
+	],
+	fears: [
+		'being rejected',
+		'being humiliated',
+		'losing control',
+		'being abandoned',
+		'making mistakes',
+		'being exposed',
+		'not being enough',
+		'being hurt again',
+	],
+
+	eightCs: ['Calm', 'Curious', 'Compassionate', 'Clear', 'Courageous', 'Confident', 'Creative', 'Connected'],
+
+	selfEnergy: {
+		partLeading: 'A part may be leading',
+		some: 'Some Self-energy present',
+		growing: 'Growing Self-energy',
+		strongly: 'Strongly Self-led',
+	},
+
+	burdenElements: {
+		light: 'Light',
+		wind: 'Wind',
+		water: 'Water',
+		fire: 'Fire',
+		earth: 'Earth',
+	},
+
+	blendedFeelings: [
+		'Scared of it',
+		'Annoyed by it',
+		'Overwhelmed by it',
+		'Frustrated with it',
+		'Merged with it',
+	],
+
+	selfLedFeelings: ['Curious', 'Compassionate', 'Calm', 'Open', 'Accepting', 'Interested'],
+
+	sessionTypes: {
+		'check-in': 'Check-In',
+		daily: 'Daily Check-In',
+		session: 'Deep Session',
+	},
+
+	protocolLabels: {
+		free: 'Free Exploration',
+		'6fs': 'Meet a Protector',
+		unburdening: 'Healing an Exile',
+	},
+
+	checkIn: {
+		header: {
+			back: '← Parts',
+		},
+		steps: {
+			ground: {
+				title: 'Ground',
+				question: "Take a breath. What's going on right now?",
+				hint: "Describe what just happened or what you're feeling. Keep it simple.",
+				placeholder:
+					"e.g. 'I just snapped at my partner and I don't know why' or 'I'm spiraling about work again'",
+			},
+			body: {
+				title: 'Body',
+				question: 'Where do you feel it in your body?',
+				hint: 'Close your eyes for a moment and let your attention move inward.',
+			},
+			emotions: {
+				title: 'Emotions',
+				question: 'What feelings are present?',
+				hint: 'Tap to select, or type your own.',
+				placeholder: 'Or name a feeling…',
+			},
+			recognize: {
+				title: 'Recognize',
+				question: 'Does this feel like a part you already know?',
+				hint: 'Look for a match in your triggers, emotions, or body location.',
+			},
+			stepback: {
+				title: 'Step Back',
+				question: 'Can you step back from it — just a little?',
+				hint: 'Notice the part, but try not to be fully inside it. How do you feel toward it right now?',
+			},
+			understand: {
+				title: 'Understand',
+				question: 'What is this part trying to do for you?',
+				hint: "Every part has a positive intention — something it believes it's protecting you from.",
+				placeholder:
+					'e.g. "It\'s trying to protect me from being humiliated" or "It wants to keep me safe"',
+			},
+			need: {
+				title: 'Need',
+				question: 'What does this part need from you?',
+				hint: 'What would it be most helpful to offer this part right now — even just as an intention?',
+				placeholder:
+					'e.g. "It needs me to acknowledge it" or "It needs reassurance that I can handle this"',
+			},
+			close: {
+				title: 'Close',
+				question: 'What do you want to remember from this moment?',
+				hint: 'Any insights, shifts, or things you want to hold onto.',
+				helpedPlaceholder: 'What helped? What shifted? What surprised you?',
+				notesPlaceholder: 'Additional notes (optional)',
+			},
+		},
+		labels: {
+			bodyLocation: 'Location',
+			bodyQuality: 'Quality of the sensation',
+			bodyLocationPlaceholder: 'e.g. "chest tightness", "knot in my gut", "heavy shoulders"',
+			bodyQualityPlaceholder: 'e.g. "hot, constricted, electric, hollow, frozen"',
+			selfLed: 'Self-led (curious, open)',
+			blended: 'Blended (merged, reactive)',
+			eightCsQuestion: "Which of the 8 C's of Self do you notice right now?",
+			newPartName: 'Give this part a name if it feels new',
+			newPartPlaceholder: 'e.g. The Protector, The Anxious One…',
+		},
+		tooltips: {
+			selfLed:
+				'Self is your calm, compassionate core. When Self is present, you can notice a part with curiosity rather than being overwhelmed by it.',
+			blended:
+				"Blending means a part has taken over and you're fully identified with its perspective — you ARE the anxiety, not watching it. The goal isn't to push the part away, just create a little space.",
+			eightCs:
+				"The 8 C's are the natural qualities of Self: Calm, Curious, Compassionate, Clear, Courageous, Confident, Creative, Connected. The more of these you feel, the more Self is present.",
+		},
+		blendedWarning: {
+			heading: 'You may be blended with this part.',
+			body: "That's okay. Take a slow breath. See if any distance is possible — even a few inches. You're not trying to push it away, just create a little space between you and the part.",
+		},
+		newPartNotice: {
+			named: 'You named a new part:',
+			body: 'After saving, you can identify it fully from the Parts section.',
+		},
+		nav: {
+			back: '← Back',
+			skip: 'Skip',
+			begin: 'Begin',
+			continue: 'Continue',
+			save: 'Save session',
+		},
+		footer: 'All steps after the first are optional',
+		saved: {
+			heading: 'Saved.',
+			subtext: 'Taking you to your session…',
+		},
+	},
+
+	protocolSession: {
+		'6fs': {
+			title: "Meet a Protector — 6 F's",
+			steps: {
+				find: {
+					title: 'Find',
+					question: 'Find the part in your body.',
+					hint: 'Where do you sense this part right now? What does it feel like to be near it?',
+				},
+				focus: {
+					title: 'Focus',
+					question: 'Let yourself stay with it.',
+					hint: 'Keep your attention here. What do you notice as you focus on it?',
+				},
+				fleshOut: {
+					title: 'Flesh Out',
+					question: 'Let the part take shape.',
+					hint: 'If this part had a form, an image, a color — what comes up? How old does it seem?',
+				},
+				feelToward: {
+					title: 'Feel Toward',
+					question: 'How do you feel toward this part right now?',
+					hint: 'Are you curious, compassionate, wary? Notice your reaction without judgment.',
+				},
+				befriend: {
+					title: 'Befriend',
+					question: 'Let the part know you see it.',
+					hint: 'Ask it: what do you do for me? What is your role? What would you like me to understand?',
+				},
+				fear: {
+					title: 'Fear',
+					question: 'Ask the part what it is afraid of.',
+					hint: 'What is this part afraid would happen if it stopped doing its job?',
+				},
+			},
+			feelTowardLabel: 'Describe your feeling toward it',
+			eightCsLabel: "8 C's of Self present right now",
+		},
+		unburdening: {
+			title: 'Healing an Exile',
+			safetyNote: {
+				heading: 'Deep work ahead.',
+				body: 'This is the exile healing process. Move at whatever pace feels right. You can stop at any step.',
+			},
+			steps: {
+				access: {
+					title: 'Access',
+					question: 'Gently bring this exile to mind.',
+					hint: 'Come to it with caring distance — not too close, not too far. What do you notice?',
+				},
+				witness: {
+					title: 'Witness',
+					question: 'Let the exile share its story.',
+					hint: 'What did it experience? What happened to it? What does it need you to know?',
+				},
+				validate: {
+					title: 'Validate',
+					question: 'Tell the exile you understand.',
+					hint: 'Write what you want to say to this part — that you see why it felt that way.',
+				},
+				doOver: {
+					title: 'Do-Over',
+					question: 'Offer it what it needed then.',
+					hint: "In your imagination, what could you provide that this part didn't get? Protection? Love? Safety?",
+				},
+				retrieve: {
+					title: 'Retrieve',
+					question: 'Bring the exile to safety.',
+					hint: 'Invite this part from that past scene to somewhere safe — with you now, or a peaceful place.',
+				},
+				unburden: {
+					title: 'Unburden',
+					question: 'Invite the exile to release its burdens.',
+					hint: 'How does the burden leave? Choose what feels right.',
+				},
+				gifts: {
+					title: 'Gifts',
+					question: "What does this exile offer now that it's lighter?",
+					hint: 'What positive quality or gift does this part carry now that the burden is released?',
+				},
+			},
+			markUnburdened: 'Mark {name} as having completed an unburdening',
+		},
+		nav: {
+			back: '← Back',
+			skip: 'Skip',
+			continue: 'Continue',
+			save: 'Save session',
+		},
+		saved: 'Session saved.',
+		defaultPlaceholder: "Take your time. There's no right answer.",
+	},
+
+	daily: {
+		header: '← Journal',
+		title: 'Daily Check-In',
+		subtitle: "A quick moment to notice what's alive inside.",
+		moodQuestion: 'How are you overall?',
+		moodAriaLabel: 'Mood {n}',
+		selfEnergyQuestion: 'How much Self-energy do you feel?',
+		partsQuestion: 'Which parts feel present today?',
+		partsMessageQuestion: 'Is there anything a part wants you to know today?',
+		partsMessagePlaceholder: 'Whatever comes up…',
+		selfEnergyLow: 'Low',
+		selfEnergyMid: 'Some',
+		selfEnergyHigh: 'Strong',
+		save: 'Save check-in',
+		saved: 'Saved. Take care today.',
+	},
+
+	sessions: {
+		title: 'Journal',
+		subtitle: 'Your IFS sessions and check-ins',
+		filterAll: 'All',
+		daily: 'Daily',
+		checkIn: '+ Check In',
+		empty: {
+			tagline: 'Your journal is empty',
+			start: 'Start a check-in to record your first session',
+			startCta: 'Start a check-in',
+		},
+		noSessionsForPart: 'No sessions for this part yet.',
+		newLabel: '(new)',
+		detail: {
+			notFound: 'Session not found.',
+			backToJournal: '← Journal',
+			whatWasHappening: 'What was happening',
+			body: 'Body',
+			emotions: 'Emotions',
+			selfEnergyPresent: 'Self-energy present',
+			positiveIntention: 'Positive intention',
+			whatItNeeds: 'What it needs',
+			sixFsSession: "6 F's Session",
+			unburdeningSession: 'Unburdening Session',
+			dailyCheckIn: 'Daily Check-In',
+			whatHelped: 'What helped',
+			notes: 'Notes',
+			burdenReleasedThrough: 'Burden released through',
+			gifts: 'Gifts',
+			moodLabel: 'Mood:',
+			viewPart: 'View {name} →',
+			identifyPart: 'Identify {name} fully →',
+			newPart: '(new part)',
+			partNotIdentified: 'Part not identified',
+			deleteSession: 'Remove this session? This cannot be undone.',
+			deleteAriaLabel: 'Delete session',
+		},
+		sixFsLabels: {
+			find: 'Find',
+			focus: 'Focus',
+			fleshOut: 'Flesh Out',
+			feelToward: 'Feel Toward',
+			befriend: 'Befriend',
+			fear: 'Fear',
+		},
+		unburdenLabels: {
+			witness: 'Witness',
+			validate: 'Validate',
+			doOver: 'Do-Over',
+			retrieve: 'Retrieve',
+		},
+	},
+
+	map: {
+		title: 'Your Inner System',
+		subtitle: "All the parts you've come to know",
+		addPart: '+ Identify Part',
+		empty: {
+			tagline: 'Your map is empty',
+			start: 'Identify your first part to see it here',
+			cta: 'Identify a part',
+		},
+		legend: {
+			exiles: 'Exiles (inner)',
+			managers: 'Managers',
+			firefighters: 'Firefighters',
+			unburdened: 'Unburdened',
+		},
+		ariaLabel: 'Parts map showing inner family system',
+		partAriaLabel: 'View {name}',
+	},
+
+	partSelector: {
+		noPartsYet: 'No parts identified yet — you can name one after this check-in.',
+		notSure: 'Not sure / this feels new',
+	},
+
+	common: {
+		backToParts: '← Back to parts',
+		nameRequired: 'Name is required.',
+		failedToDelete: 'Failed to delete.',
+		failedToSave: 'Failed to save.',
+		failedToImport: 'Could not import — the file may be invalid.',
+		failedToImportCorrupted: 'Could not import — the file may be invalid or corrupted.',
+		deletePartConfirm: 'Remove "{name}"? This cannot be undone.',
+		or: 'or',
+	},
+};
+
+export type Translations = typeof en;

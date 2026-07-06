@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { EIGHT_CS } from '$lib/data/session-constants';
+	import { t, tArray } from '$lib/i18n.svelte';
 
 	interface Props {
 		selected: string[];
@@ -20,14 +20,14 @@
 	const count = $derived(selected.length);
 
 	const energyLabel = $derived(
-		count <= 2 ? 'A part may be leading'
-		: count <= 4 ? 'Some Self-energy present'
-		: count <= 6 ? 'Growing Self-energy'
-		: 'Strongly Self-led'
+		count <= 2 ? t('selfEnergy.partLeading')
+		: count <= 4 ? t('selfEnergy.some')
+		: count <= 6 ? t('selfEnergy.growing')
+		: t('selfEnergy.strongly')
 	);
 
 	const energyColor = $derived(
-		count <= 2 ? '#a78bfa'   // muted violet
+		count <= 2 ? '#a78bfa'
 		: count <= 4 ? '#8b5cf6'
 		: count <= 6 ? '#7c3aed'
 		: '#5b21b6'
@@ -36,7 +36,7 @@
 
 <div class="space-y-4">
 	<div class="flex flex-wrap gap-2">
-		{#each EIGHT_CS as c}
+		{#each tArray('eightCs') as c}
 			{@const on = selected.includes(c)}
 			<button
 				type="button"

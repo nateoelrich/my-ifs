@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { base } from '$app/paths';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	import { t } from '$lib/i18n.svelte';
 
-	const tabs = [
-		{ href: '/parts', label: 'Parts', icon: 'parts' },
-		{ href: '/check-in', label: 'Check In', icon: 'check-in', primary: true },
-		{ href: '/map', label: 'Map', icon: 'map' },
-		{ href: '/sessions', label: 'Journal', icon: 'journal' }
-	];
+	const tabs = $derived([
+		{ href: '/parts', label: t('nav.parts'), icon: 'parts' },
+		{ href: '/check-in', label: t('nav.checkIn'), icon: 'check-in', primary: true },
+		{ href: '/map', label: t('nav.map'), icon: 'map' },
+		{ href: '/sessions', label: t('nav.journal'), icon: 'journal' }
+	]);
 
 	function isActive(path: string): boolean {
-		return $page.url.pathname.startsWith(`${base}${path}`);
+		return page.url.pathname.startsWith(`${base}${path}`);
 	}
 </script>
 

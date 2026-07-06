@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Part } from '$lib/data/types';
+	import { t } from '$lib/i18n.svelte';
 	import PartAvatar from './PartAvatar.svelte';
 	import { ROLE_LABEL_MAP } from '$lib/data/part-constants';
 
@@ -18,7 +19,7 @@
 
 <div class="space-y-2">
 	{#if parts.length === 0}
-		<p class="text-sm text-stone-400 italic">No parts identified yet — you can name one after this check-in.</p>
+		<p class="text-sm text-stone-400 italic">{t('partSelector.noPartsYet')}</p>
 	{:else}
 		<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 			{#each parts as part}
@@ -35,7 +36,7 @@
 					<div class="flex-1 min-w-0">
 						<p class="text-sm font-medium text-stone-800 truncate">{part.name}</p>
 						{#if part.roleType}
-							<p class="text-xs text-stone-400">{ROLE_LABEL_MAP[part.roleType] ?? part.roleType}</p>
+							<p class="text-xs text-stone-400">{t(`roles.${part.roleType}.label`)}</p>
 						{/if}
 					</div>
 					{#if selected}
@@ -51,7 +52,7 @@
 			class="text-sm text-stone-400 hover:text-stone-600 transition-colors py-1"
 			class:underline={selectedId === undefined}
 		>
-			Not sure / this feels new
+			{t('partSelector.notSure')}
 		</button>
 	{/if}
 </div>

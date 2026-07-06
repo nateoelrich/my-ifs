@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { base } from '$app/paths';
 	import { dataStore } from '$lib/data/workspace.svelte';
-	import { ROLE_BADGE_MAP, ROLE_LABEL_MAP } from '$lib/data/part-constants';
+	import { ROLE_BADGE_MAP } from '$lib/data/part-constants';
 	import { formatDate } from '$lib/utils/format';
+	import { t } from '$lib/i18n.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
 
@@ -10,11 +11,11 @@
 	let error = $state('');
 
 	function handleDelete(id: string, name: string) {
-		if (!confirm(`Remove "${name}"? This cannot be undone.`)) return;
+		if (!confirm(t('common.deletePartConfirm', { name }))) return;
 		try {
 			dataStore.deletePart(id);
 		} catch {
-			error = 'Failed to delete part.';
+			error = t('common.failedToDelete');
 		}
 	}
 
@@ -26,7 +27,7 @@
 			try {
 				dataStore.importJSON(ev.target?.result as string);
 			} catch {
-				error = 'Could not import — the file may be invalid.';
+				error = t('common.failedToImport');
 			}
 		};
 		reader.readAsText(file);
@@ -39,17 +40,17 @@
 <main class="max-w-4xl mx-auto px-4 py-6 sm:py-8">
 	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
 		<div>
-			<h1 class="text-xl sm:text-2xl font-serif text-stone-700">Your Parts</h1>
+			<h1 class="text-xl sm:text-2xl font-serif text-stone-700">{t('parts.title')}</h1>
 			<p class="text-stone-500 text-sm mt-1">
-				Inner voices and protectors you've come to know ·
-				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">What are parts?</a>
+				{t('parts.subtitle')} ·
+				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">{t('parts.whatAreParts')}</a>
 			</p>
 		</div>
 		<a
 			href="{base}/parts/new"
 			class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors text-center min-h-[44px] flex items-center justify-center"
 		>
-			+ Identify a Part
+			{t('parts.addPart')}
 		</a>
 	</div>
 
@@ -60,20 +61,20 @@
 	{#if dataStore.parts.length === 0}
 		<div class="text-center py-20 text-stone-400">
 			<div class="text-5xl mb-4">🌱</div>
-			<p class="text-lg font-serif italic text-stone-500">Your inner family is waiting to be known</p>
+			<p class="text-lg font-serif italic text-stone-500">{t('parts.empty.tagline')}</p>
 			<p class="text-sm mt-2 max-w-sm mx-auto text-stone-400 leading-relaxed">
-				Parts are distinct voices, feelings, and patterns inside you — each trying to help in its own way.
-				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">Learn how IFS works →</a>
+				{t('parts.empty.description')}
+				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">{t('parts.empty.learnLink')}</a>
 			</p>
-			<p class="text-sm mt-5 mb-6 text-stone-400">Start by identifying your first part</p>
+			<p class="text-sm mt-5 mb-6 text-stone-400">{t('parts.empty.start')}</p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
 				<a
 					href="{base}/parts/new"
 					class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-6 py-3 text-sm font-medium transition-colors min-h-[44px] flex items-center"
 				>
-					Identify your first part
+					{t('parts.empty.identifyFirst')}
 				</a>
-				<span class="text-stone-300 hidden sm:block">or</span>
+				<span class="text-stone-300 hidden sm:block">{t('common.or')}</span>
 				<div>
 					<input
 						bind:this={importInput}
@@ -86,7 +87,7 @@
 						onclick={() => importInput?.click()}
 						class="text-sm text-stone-400 hover:text-stone-600 underline transition-colors min-h-[44px] flex items-center"
 					>
-						restore from backup
+						{t('parts.empty.restoreBackup')}
 					</button>
 				</div>
 			</div>
@@ -109,7 +110,7 @@
 								type="button"
 								onclick={(e) => { e.preventDefault(); handleDelete(part.id, part.name); }}
 								class="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none opacity-100 sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 p-1"
-								aria-label="Delete {part.name}"
+								aria-label={t('parts.deleteAriaLabel', { name: part.name })}
 							>
 								×
 							</button>
@@ -121,14 +122,14 @@
 
 						{#if part.bodyLocation}
 							<p class="text-stone-400 text-xs mb-3">
-								Felt in: <span class="text-stone-500">{part.bodyLocation}</span>
+								{t('parts.feltIn')} <span class="text-stone-500">{part.bodyLocation}</span>
 							</p>
 						{/if}
 
 						<div class="flex items-center justify-between">
 							{#if part.roleType}
 								<span class="text-xs font-medium px-2.5 py-1 rounded-full {ROLE_BADGE_MAP[part.roleType] ?? ROLE_BADGE_MAP.unknown}">
-									{ROLE_LABEL_MAP[part.roleType] ?? part.roleType}
+									{t(`roles.${part.roleType}.label`)}
 								</span>
 							{:else}
 								<span></span>
