@@ -58,6 +58,13 @@
 	</div>
 
 	<div class="flex items-center gap-1 sm:gap-2">
+		<a
+			href="{base}/about"
+			class="text-xs text-stone-400 hover:text-stone-700 transition-colors min-h-[44px] hidden sm:flex items-center px-2"
+			title="What is IFS?"
+		>
+			What is IFS?
+		</a>
 		<input
 			bind:this={importInput}
 			type="file"

@@ -10,6 +10,7 @@
 	import SelfEnergyCheck from '$lib/components/SelfEnergyCheck.svelte';
 	import PartSelector from '$lib/components/PartSelector.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	const STEPS = [
 		{ id: 'ground',     title: 'Ground' },
@@ -241,7 +242,10 @@
 								</div>
 
 								<div class="space-y-2">
-									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide">Self-led (curious, open)</p>
+									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide flex items-center">
+										Self-led (curious, open)
+										<Tooltip text="Self is your calm, compassionate core. When Self is present, you can notice a part with curiosity rather than being overwhelmed by it." />
+									</p>
 									<div class="flex flex-wrap gap-2">
 										{#each SELF_LED_FEELINGS as f}
 											<button
@@ -259,7 +263,10 @@
 								</div>
 
 								<div class="space-y-2">
-									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide">Blended (merged, reactive)</p>
+									<p class="text-xs font-medium text-stone-400 uppercase tracking-wide flex items-center">
+										Blended (merged, reactive)
+										<Tooltip text="Blending means a part has taken over and you're fully identified with its perspective — you ARE the anxiety, not watching it. The goal isn't to push the part away, just create a little space." />
+									</p>
 									<div class="flex flex-wrap gap-2">
 										{#each BLENDED_FEELINGS as f}
 											<button
@@ -284,7 +291,10 @@
 								{/if}
 
 								<div class="pt-2">
-									<p class="text-sm text-stone-600 mb-3">Which of the 8 C's of Self do you notice in yourself right now?</p>
+									<p class="text-sm text-stone-600 mb-3 flex items-center">
+										Which of the 8 C's of Self do you notice right now?
+										<Tooltip text="The 8 C's are the natural qualities of Self: Calm, Curious, Compassionate, Clear, Courageous, Confident, Creative, Connected. The more of these you feel, the more Self is present." />
+									</p>
 									<SelfEnergyCheck bind:selected={selfEnergyQualities} />
 								</div>
 							</div>

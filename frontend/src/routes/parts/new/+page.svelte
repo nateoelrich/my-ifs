@@ -18,6 +18,7 @@
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import TagInput from '$lib/components/TagInput.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 
 	const DRAFT_KEY = 'ifs_part_draft';
 
@@ -349,7 +350,10 @@
 								<p class="text-stone-400 text-sm">Every part has a positive intention — something it is trying to do for you, even when the strategy feels harmful.</p>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Positive intention</label>
+								<label class="block text-sm text-stone-600 flex items-center">
+									Positive intention
+									<Tooltip text="Every part has a positive intention — something it believes it's doing for you, even when its behavior feels harmful. Discovering this shifts the relationship from adversarial to collaborative." />
+								</label>
 								<textarea
 									bind:value={positiveIntention}
 									rows={3}
@@ -380,7 +384,10 @@
 								/>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">Origin story <span class="text-stone-400">(optional)</span></label>
+								<label class="block text-sm text-stone-600 flex items-center">
+									Origin story <span class="text-stone-400 ml-1">(optional)</span>
+									<Tooltip text="Parts take on protective roles in response to specific experiences — usually in childhood. Understanding when and why a part formed builds compassion for it rather than frustration." />
+								</label>
 								<textarea
 									bind:value={originStory}
 									rows={4}
@@ -429,7 +436,10 @@
 								<p class="text-stone-400 text-sm">When parts feel seen and cared for, they can relax their extreme role and offer their gifts.</p>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">What does this part need from your Self?</label>
+								<label class="block text-sm text-stone-600 flex items-center">
+									What does this part need from your Self?
+									<Tooltip text="Self is your calm, compassionate core — distinct from your parts. When Self offers understanding or presence to a part, the part often relaxes and no longer needs to be extreme." />
+								</label>
 								<textarea
 									bind:value={whatItNeedsFromSelf}
 									rows={3}
@@ -438,7 +448,10 @@
 								></textarea>
 							</div>
 							<div class="space-y-1">
-								<label class="block text-sm text-stone-600">What gifts might it offer when unburdened? <span class="text-stone-400">(optional)</span></label>
+								<label class="block text-sm text-stone-600 flex items-center">
+									What gifts might it offer when unburdened? <span class="text-stone-400 ml-1">(optional)</span>
+									<Tooltip text="Unburdening is when a part releases the extreme beliefs and emotions it took on during painful experiences. Freed of those burdens, it naturally offers its positive qualities — courage, aliveness, playfulness." />
+								</label>
 								<textarea
 									bind:value={giftsWhenUnburdened}
 									rows={3}

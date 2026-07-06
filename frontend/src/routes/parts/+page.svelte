@@ -40,7 +40,10 @@
 	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
 		<div>
 			<h1 class="text-xl sm:text-2xl font-serif text-stone-700">Your Parts</h1>
-			<p class="text-stone-500 text-sm mt-1">Inner voices, emotions, and protectors you've come to know</p>
+			<p class="text-stone-500 text-sm mt-1">
+				Inner voices and protectors you've come to know ·
+				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">What are parts?</a>
+			</p>
 		</div>
 		<a
 			href="{base}/parts/new"
@@ -58,7 +61,11 @@
 		<div class="text-center py-20 text-stone-400">
 			<div class="text-5xl mb-4">🌱</div>
 			<p class="text-lg font-serif italic text-stone-500">Your inner family is waiting to be known</p>
-			<p class="text-sm mt-2 mb-6">Begin by getting to know one of your inner voices</p>
+			<p class="text-sm mt-2 max-w-sm mx-auto text-stone-400 leading-relaxed">
+				Parts are distinct voices, feelings, and patterns inside you — each trying to help in its own way.
+				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">Learn how IFS works →</a>
+			</p>
+			<p class="text-sm mt-5 mb-6 text-stone-400">Start by identifying your first part</p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-3">
 				<a
 					href="{base}/parts/new"
