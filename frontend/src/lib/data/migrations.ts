@@ -2,8 +2,10 @@ import {
 	FORMAT_NAME,
 	FORMAT_VERSION,
 	PART_SCHEMA_VERSION,
+	SESSION_SCHEMA_VERSION,
 	type IfsWorkspace,
-	type Part
+	type Part,
+	type Session
 } from './types';
 
 export function createEmptyWorkspace(): IfsWorkspace {
@@ -13,7 +15,7 @@ export function createEmptyWorkspace(): IfsWorkspace {
 		format: FORMAT_NAME,
 		version: FORMAT_VERSION,
 		meta: { createdAt: now, updatedAt: now },
-		collections: { parts: [] }
+		collections: { parts: [], sessions: [] }
 	};
 }
 
@@ -32,14 +34,13 @@ export function loadWorkspace(raw: string | null): IfsWorkspace {
 	}
 }
 
-// Ensures any records loaded from storage have all required array fields
-// (protects against partial/old data missing new fields).
 function ensureDefaults(ws: IfsWorkspace): IfsWorkspace {
 	return {
 		...ws,
 		collections: {
 			...ws.collections,
-			parts: (ws.collections?.parts ?? []).map(ensurePartDefaults)
+			parts: (ws.collections?.parts ?? []).map(ensurePartDefaults),
+			sessions: (ws.collections?.sessions ?? []).map(ensureSessionDefaults)
 		}
 	};
 }
@@ -57,6 +58,19 @@ function ensurePartDefaults(p: Partial<Part>): Part {
 		...p,
 		id: p.id ?? crypto.randomUUID(),
 		name: p.name ?? 'Unnamed part'
+	};
+}
+
+function ensureSessionDefaults(s: Partial<Session>): Session {
+	return {
+		type: 'check-in',
+		schemaVersion: SESSION_SCHEMA_VERSION,
+		createdAt: new Date().toISOString(),
+		updatedAt: new Date().toISOString(),
+		emotions: [],
+		selfEnergyQualities: [],
+		...s,
+		id: s.id ?? crypto.randomUUID()
 	};
 }
 
