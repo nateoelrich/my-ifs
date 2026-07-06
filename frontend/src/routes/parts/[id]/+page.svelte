@@ -14,6 +14,7 @@
 		TRIGGER_SUGGESTIONS,
 		FEAR_SUGGESTIONS
 	} from '$lib/data/part-constants';
+	import { SESSION_TYPE_LABELS, PROTOCOL_LABELS } from '$lib/data/session-constants';
 	import { formatDate } from '$lib/utils/format';
 	import Nav from '$lib/components/Nav.svelte';
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
@@ -23,6 +24,9 @@
 
 	const id = $derived(page.params.id ?? '');
 	const part = $derived(dataStore.getPart(id) ?? null);
+	const recentSessions = $derived(
+		id ? dataStore.getSessionsForPart(id).slice(0, 3) : []
+	);
 
 	let editing = $state(false);
 	let error = $state('');
@@ -271,6 +275,59 @@
 				{#if part.notes}
 					<Section title="Notes">
 						<p class="text-stone-600 whitespace-pre-wrap">{part.notes}</p>
+					</Section>
+				{/if}
+
+				<!-- Go deeper: protocol links -->
+				<Section class="space-y-3">
+					<p class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-3">Go Deeper</p>
+					<div class="flex flex-wrap gap-2">
+						{#if part.roleType !== 'exile'}
+							<a
+								href="{base}/sessions/new?protocol=6fs&partId={part.id}"
+								class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
+							>
+								Meet this part (6 F's) →
+							</a>
+						{/if}
+						{#if part.roleType === 'exile'}
+							<a
+								href="{base}/sessions/new?protocol=unburdening&partId={part.id}"
+								class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
+							>
+								Heal this exile →
+							</a>
+						{/if}
+						<a
+							href="{base}/check-in"
+							class="text-sm px-4 py-2 rounded-lg border border-stone-200 text-stone-600 hover:border-primary-300 hover:text-primary-700 transition-colors"
+						>
+							Check in now →
+						</a>
+					</div>
+				</Section>
+
+				<!-- Recent sessions -->
+				{#if recentSessions.length > 0}
+					<Section title="Recent Sessions" class="space-y-2">
+						{#each recentSessions as s}
+							{@const slabel = s.protocol && s.protocol !== 'free' ? PROTOCOL_LABELS[s.protocol] : SESSION_TYPE_LABELS[s.type]}
+							<a
+								href="{base}/sessions/{s.id}"
+								class="flex items-center justify-between rounded-lg px-3 py-2.5 border border-stone-100 hover:border-stone-200 bg-stone-50 hover:bg-white transition-all text-sm gap-3"
+							>
+								<div class="flex items-center gap-2 min-w-0">
+									<span class="text-xs px-2 py-0.5 rounded-full flex-shrink-0" style="background-color: {part.color ?? '#7c3aed'}18; color: {part.color ?? '#7c3aed'};">{slabel}</span>
+									<span class="text-stone-500 truncate">{s.context?.slice(0, 50) || s.whatIsItDoing?.slice(0, 50) || 'No notes'}</span>
+								</div>
+								<span class="text-xs text-stone-300 flex-shrink-0">{formatDate(s.createdAt)}</span>
+							</a>
+						{/each}
+						{#if dataStore.getSessionsForPart(part.id).length > 3}
+							<a href="{base}/sessions" class="text-xs text-primary-600 hover:underline block text-right">
+								View all sessions →
+							</a>
+						{/if}
 					</Section>
 				{/if}
 

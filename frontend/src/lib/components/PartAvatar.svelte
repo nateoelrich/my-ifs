@@ -2,16 +2,17 @@
 	interface Props {
 		color?: string;
 		name: string;
-		size?: 'sm' | 'md' | 'lg' | 'xl';
+		size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 	}
 
 	let { color = '#9E968E', name, size = 'md' }: Props = $props();
 
 	const sizeMap = {
-		sm:  { outer: 'w-10 h-10',  text: 'text-sm'  },
-		md:  { outer: 'w-16 h-16',  text: 'text-xl'  },
-		lg:  { outer: 'w-24 h-24',  text: 'text-3xl' },
-		xl:  { outer: 'w-32 h-32',  text: 'text-4xl' },
+		xs:  { outer: 'w-5 h-5',    text: 'text-[10px]' },
+		sm:  { outer: 'w-10 h-10',  text: 'text-sm'     },
+		md:  { outer: 'w-16 h-16',  text: 'text-xl'     },
+		lg:  { outer: 'w-12 h-12',  text: 'text-lg'     },
+		xl:  { outer: 'w-32 h-32',  text: 'text-4xl'    },
 	};
 
 	const s = $derived(sizeMap[size]);

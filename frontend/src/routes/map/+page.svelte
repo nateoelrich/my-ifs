@@ -1,13 +1,231 @@
 <script lang="ts">
+	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import { dataStore } from '$lib/data/workspace.svelte';
 	import Nav from '$lib/components/Nav.svelte';
+	import type { Part } from '$lib/data/types';
+
+	// Map dimensions
+	const W = 620;
+	const H = 520;
+	const CX = W / 2;
+	const CY = H / 2;
+	const SELF_R = 44;
+
+	interface Node {
+		part: Part;
+		x: number;
+		y: number;
+		r: number;
+	}
+
+	// Auto-layout: arrange parts in arcs by role
+	// Exiles: inner ring (closer to Self)
+	// Managers: left arc
+	// Firefighters: right arc
+	// Unknown: outer ring, bottom
+	const nodes = $derived(computeLayout(dataStore.parts));
+
+	function computeLayout(parts: Part[]): Node[] {
+		if (parts.length === 0) return [];
+
+		const exiles     = parts.filter((p) => p.roleType === 'exile');
+		const managers   = parts.filter((p) => p.roleType === 'manager');
+		const fighters   = parts.filter((p) => p.roleType === 'firefighter');
+		const unknowns   = parts.filter((p) => !p.roleType || p.roleType === 'unknown');
+
+		const result: Node[] = [];
+
+		function placeArc(group: Part[], r: number, startAngle: number, endAngle: number, nodeR: number) {
+			if (group.length === 0) return;
+			const step = group.length === 1 ? 0 : (endAngle - startAngle) / (group.length - 1);
+			group.forEach((part, i) => {
+				const angle = startAngle + i * step;
+				result.push({
+					part,
+					x: CX + r * Math.cos(angle),
+					y: CY + r * Math.sin(angle),
+					r: nodeR
+				});
+			});
+		}
+
+		// Exiles: inner ring, hidden behind Self (bottom quadrant, slightly obscured)
+		placeArc(exiles, 115, Math.PI * 0.55, Math.PI * 0.95, 26);
+		// Managers: left side
+		placeArc(managers, 190, Math.PI * 1.1, Math.PI * 1.8, 30);
+		// Firefighters: right side
+		placeArc(fighters, 190, Math.PI * -0.7, Math.PI * 0.1, 30);
+		// Unknowns: outer top arc
+		placeArc(unknowns, 210, Math.PI * 1.85, Math.PI * 2.5, 26);
+
+		return result;
+	}
+
+	// Protector → exile arcs
+	const arcs = $derived(
+		nodes.flatMap((n) => {
+			if (!n.part.protectsPartId) return [];
+			const target = nodes.find((t) => t.part.id === n.part.protectsPartId);
+			if (!target) return [];
+			return [{ from: n, to: target }];
+		})
+	);
+
+	function arcPath(from: Node, to: Node): string {
+		const mx = (from.x + to.x) / 2;
+		const my = (from.y + to.y) / 2 - 30;
+		return `M ${from.x} ${from.y} Q ${mx} ${my} ${to.x} ${to.y}`;
+	}
+
+	let hoveredId = $state<string | undefined>(undefined);
 </script>
 
 <Nav />
 
-<main class="max-w-4xl mx-auto px-4 py-8 sm:py-12">
-	<div class="text-center py-20 text-stone-400">
-		<div class="text-5xl mb-4">⊞</div>
-		<p class="text-lg font-serif italic text-stone-500">Parts Map — coming soon</p>
-		<p class="text-sm mt-2 text-stone-400">A visual picture of your inner system.</p>
+<main class="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+	<div class="flex items-center justify-between mb-6">
+		<div>
+			<h1 class="text-xl sm:text-2xl font-serif text-stone-700">Your Inner System</h1>
+			<p class="text-stone-500 text-sm mt-1">All the parts you've come to know</p>
+		</div>
+		<a
+			href="{base}/parts/new"
+			class="text-sm text-stone-500 hover:text-primary-700 border border-stone-200 hover:border-primary-300 rounded-lg px-4 py-2.5 transition-colors"
+		>
+			+ Identify Part
+		</a>
 	</div>
+
+	{#if dataStore.parts.length === 0}
+		<div class="text-center py-20 text-stone-400">
+			<div class="text-5xl mb-4">⊞</div>
+			<p class="text-lg font-serif italic text-stone-500">Your map is empty</p>
+			<p class="text-sm mt-2 mb-6">Identify your first part to see it here</p>
+			<a href="{base}/parts/new" class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-6 py-3 text-sm font-medium transition-colors inline-flex items-center">
+				Identify a part
+			</a>
+		</div>
+	{:else}
+		<div class="rounded-2xl border border-stone-100 bg-stone-50 overflow-hidden">
+			<svg
+				viewBox="0 0 {W} {H}"
+				class="w-full"
+				style="max-height: 70vh;"
+				role="img"
+				aria-label="Parts map showing inner family system"
+			>
+				<!-- Subtle rings for depth -->
+				<circle cx={CX} cy={CY} r={130} fill="none" stroke="#e7e5e4" stroke-width="1" stroke-dasharray="4 6" opacity="0.5" />
+				<circle cx={CX} cy={CY} r={200} fill="none" stroke="#e7e5e4" stroke-width="1" stroke-dasharray="4 8" opacity="0.3" />
+
+				<!-- Protector → exile arcs -->
+				{#each arcs as arc}
+					<path
+						d={arcPath(arc.from, arc.to)}
+						fill="none"
+						stroke={arc.from.part.color ?? '#9E968E'}
+						stroke-width="1.5"
+						stroke-dasharray="5 4"
+						opacity="0.35"
+					/>
+				{/each}
+
+				<!-- Part nodes -->
+				{#each nodes as node}
+					{@const isHovered = hoveredId === node.part.id}
+					<g
+						style="cursor: pointer;"
+						role="button"
+						tabindex="0"
+						aria-label="View {node.part.name}"
+						onmouseenter={() => (hoveredId = node.part.id)}
+						onmouseleave={() => (hoveredId = undefined)}
+						onclick={() => goto(`${base}/parts/${node.part.id}`)}
+						onkeydown={(e) => e.key === 'Enter' && goto(`${base}/parts/${node.part.id}`)}
+					>
+						<!-- Glow ring on hover -->
+						{#if isHovered}
+							<circle
+								cx={node.x}
+								cy={node.y}
+								r={node.r + 6}
+								fill="{node.part.color ?? '#9E968E'}28"
+							/>
+						{/if}
+
+						<!-- Part circle -->
+						<circle
+							cx={node.x}
+							cy={node.y}
+							r={node.r}
+							fill={node.part.color ?? '#9E968E'}
+							opacity={node.part.roleType === 'exile' ? 0.7 : 1}
+						/>
+
+						<!-- Unburdened indicator -->
+						{#if node.part.hasUnburdened}
+							<circle
+								cx={node.x + node.r * 0.65}
+								cy={node.y - node.r * 0.65}
+								r="7"
+								fill="white"
+							/>
+							<text x={node.x + node.r * 0.65} y={node.y - node.r * 0.65 + 4} text-anchor="middle" font-size="9">✦</text>
+						{/if}
+
+						<!-- Initial letter -->
+						<text
+							x={node.x}
+							y={node.y + 1}
+							text-anchor="middle"
+							dominant-baseline="middle"
+							fill="white"
+							font-size={node.r > 28 ? '14' : '11'}
+							font-family="serif"
+							font-weight="500"
+							opacity="0.95"
+						>
+							{node.part.name.charAt(0).toUpperCase()}
+						</text>
+
+						<!-- Name label -->
+						<text
+							x={node.x}
+							y={node.y + node.r + 14}
+							text-anchor="middle"
+							fill={isHovered ? (node.part.color ?? '#44403c') : '#78716c'}
+							font-size="11"
+							font-family="system-ui, sans-serif"
+							font-weight={isHovered ? '600' : '400'}
+						>
+							{node.part.name.length > 14 ? node.part.name.slice(0, 12) + '…' : node.part.name}
+						</text>
+					</g>
+				{/each}
+
+				<!-- Self circle (always on top) -->
+				<circle cx={CX} cy={CY} r={SELF_R} fill="#7c3aed" />
+				<circle cx={CX} cy={CY} r={SELF_R - 4} fill="none" stroke="white" stroke-width="1.5" opacity="0.4" />
+				<text
+					x={CX}
+					y={CY + 1}
+					text-anchor="middle"
+					dominant-baseline="middle"
+					fill="white"
+					font-size="14"
+					font-family="serif"
+					font-style="italic"
+				>Self</text>
+			</svg>
+		</div>
+
+		<!-- Legend -->
+		<div class="mt-4 flex flex-wrap gap-4 text-xs text-stone-400 justify-center">
+			<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-stone-400 inline-block opacity-70"></span>Exiles (inner)</span>
+			<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-stone-500 inline-block"></span>Managers</span>
+			<span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-stone-500 inline-block"></span>Firefighters</span>
+			<span class="flex items-center gap-1.5"><span class="text-[10px]">✦</span> Unburdened</span>
+		</div>
+	{/if}
 </main>
