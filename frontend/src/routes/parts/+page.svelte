@@ -1,14 +1,29 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { dataStore } from '$lib/data/workspace.svelte';
+	import { accessStore, FREE_PARTS_LIMIT } from '$lib/data/access.svelte';
 	import { ROLE_BADGE_MAP } from '$lib/data/part-constants';
 	import { formatDate } from '$lib/utils/format';
 	import { t } from '$lib/i18n.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import PartAvatar from '$lib/components/PartAvatar.svelte';
+	import PaywallModal from '$lib/components/PaywallModal.svelte';
+	import PaywallBanner from '$lib/components/PaywallBanner.svelte';
 
 	let importInput = $state<HTMLInputElement | undefined>(undefined);
 	let error = $state('');
+	let showPaywallModal = $state(false);
+
+	const atLimit = $derived(dataStore.parts.length >= FREE_PARTS_LIMIT && !accessStore.unlocked);
+
+	function handleAddPart() {
+		if (atLimit) {
+			showPaywallModal = true;
+		} else {
+			goto(`${base}/parts/new`);
+		}
+	}
 
 	function handleDelete(id: string, name: string) {
 		if (!confirm(t('common.deletePartConfirm', { name }))) return;
@@ -46,12 +61,12 @@
 				<a href="{base}/about" class="text-primary-500 hover:text-primary-700 transition-colors">{t('parts.whatAreParts')}</a>
 			</p>
 		</div>
-		<a
-			href="{base}/parts/new"
+		<button
+			onclick={handleAddPart}
 			class="bg-primary-600 hover:bg-primary-700 text-white rounded-lg px-4 py-3 text-sm font-medium transition-colors text-center min-h-[44px] flex items-center justify-center"
 		>
 			{t('parts.addPart')}
-		</a>
+		</button>
 	</div>
 
 	{#if error}
@@ -139,6 +154,19 @@
 					</div>
 				</a>
 			{/each}
+
+			{#if atLimit}
+				<div class="sm:col-span-2 lg:col-span-3 mt-2">
+					<PaywallBanner onUpgrade={() => (showPaywallModal = true)} />
+				</div>
+			{/if}
 		</div>
 	{/if}
 </main>
+
+{#if showPaywallModal}
+	<PaywallModal
+		onClose={() => (showPaywallModal = false)}
+		onUnlocked={() => { showPaywallModal = false; goto(`${base}/parts/new`); }}
+	/>
+{/if}

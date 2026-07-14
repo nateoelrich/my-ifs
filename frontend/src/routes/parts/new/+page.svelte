@@ -4,6 +4,8 @@
 	import { base } from '$app/paths';
 	import { fly, fade, slide } from 'svelte/transition';
 	import { dataStore } from '$lib/data/workspace.svelte';
+	import { accessStore, FREE_PARTS_LIMIT } from '$lib/data/access.svelte';
+	import PaywallModal from '$lib/components/PaywallModal.svelte';
 	import type { CreatePartInput } from '$lib/data/types';
 	import {
 		DEFAULT_PART_COLOR,
@@ -131,6 +133,7 @@
 	}
 
 	const stepId = $derived(currentStep >= 0 ? STEP_IDS[currentStep] : '');
+	const showPaywall = $derived(dataStore.parts.length >= FREE_PARTS_LIMIT && !accessStore.unlocked);
 </script>
 
 <!-- Minimal wizard header -->
@@ -607,6 +610,10 @@
 
 	<p class="text-center text-xs text-stone-300 mt-5">{t('partWizard.autosave')}</p>
 </main>
+
+{#if showPaywall}
+	<PaywallModal onClose={() => goto(`${base}/parts`)} />
+{/if}
 
 <style>
 	.wizard-field input:focus,

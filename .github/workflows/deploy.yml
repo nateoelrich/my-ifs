@@ -29,6 +29,9 @@ jobs:
         working-directory: frontend
         env:
           GITHUB_ACTIONS: true
+          VITE_UNLOCK_KEY: ${{ secrets.VITE_UNLOCK_KEY }}
+          VITE_FRIEND_CODE_HASHES: ${{ secrets.VITE_FRIEND_CODE_HASHES }}
+          VITE_STRIPE_PAYMENT_LINK: ${{ secrets.VITE_STRIPE_PAYMENT_LINK }}
       - name: Add .nojekyll
         run: touch frontend/build/.nojekyll
       - uses: actions/upload-pages-artifact@v3

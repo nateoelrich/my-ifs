@@ -8,7 +8,7 @@ const config = {
 	kit: {
 		adapter: adapter({ fallback: '404.html' }),
 		paths: {
-			base: process.env.GITHUB_ACTIONS ? '/my-ifs' : ''
+			base: process.env.CUSTOM_DOMAIN ? '' : (process.env.GITHUB_ACTIONS ? '/my-ifs' : '')
 		}
 	}
 };
