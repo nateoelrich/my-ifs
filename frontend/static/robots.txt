@@ -1,3 +1,9 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /parts/
+Disallow: /sessions/
+Disallow: /check-in/
+Disallow: /map/
+Disallow: /unlock/
+
+Sitemap: https://myifs.app/sitemap.xml
