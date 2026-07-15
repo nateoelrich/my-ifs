@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 
-export const FREE_PARTS_LIMIT = 2;
+export const FREE_PARTS_LIMIT = 5;
 
 const ACCESS_STORAGE_KEY = 'ifs-access';
 const UNLOCK_KEY = import.meta.env.VITE_UNLOCK_KEY ?? '';

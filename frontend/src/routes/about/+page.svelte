@@ -3,6 +3,11 @@
 	import Nav from '$lib/components/Nav.svelte';
 </script>
 
+<svelte:head>
+	<title>What is Internal Family Systems (IFS)? — My IFS</title>
+	<meta name="description" content="Internal Family Systems (IFS) is a therapy model developed by Dr. Richard Schwartz. Learn about parts, Self, exiles, managers, and firefighters — and how IFS self-practice works." />
+</svelte:head>
+
 <Nav />
 
 <main class="max-w-2xl mx-auto px-4 py-8 sm:py-12">

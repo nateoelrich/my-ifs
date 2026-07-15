@@ -12,7 +12,7 @@
 		<span class="text-xs font-medium text-primary-700 uppercase tracking-widest">Free tier</span>
 	</div>
 	<p class="text-sm text-stone-600 leading-relaxed">
-		You've identified your 2 free parts. Unlock My IFS to add more and continue your inner work.
+		You've identified your 5 free parts. Unlock My IFS to add more and continue your inner work.
 	</p>
 	<button
 		onclick={onUpgrade}

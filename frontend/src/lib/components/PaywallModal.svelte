@@ -60,7 +60,7 @@
 		</div>
 
 		<h2 class="font-serif text-xl text-stone-800 leading-snug mb-2">
-			You've met your 2 free parts
+			You've met your 5 free parts
 		</h2>
 		<p class="text-stone-500 text-sm leading-relaxed mb-7">
 			Unlock My IFS to add unlimited parts, sessions, and check-ins — and keep building your inner map.
